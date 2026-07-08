@@ -21,6 +21,7 @@
       color: var(--gray-text);
       line-height: 1.6;
       background: var(--gray-bg);
+      -webkit-text-size-adjust: 100%;
     }
     a { text-decoration: none; color: inherit; }
     ul { list-style: none; }
@@ -34,22 +35,60 @@
       top: 0;
       z-index: 1000;
     }
+
     nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
       height: 70px;
+      gap: 12px;
+      position: relative;
     }
+
     .logo { font-weight: bold; font-size: 1.4rem; color: var(--primary-dark); }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
     .nav-links a {
-      margin-left: 20px;
       font-weight: 500;
       transition: color 0.2s;
+      white-space: nowrap;
     }
+
     .nav-links a:hover { color: var(--primary); }
+
+    /* КНОПКА БУРГЕРА */
+    .nav-toggle {
+      display: none;
+      border: 0;
+      background: transparent;
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      touch-action: manipulation;
+    }
+    .nav-toggle:focus { outline: 2px solid rgba(255,138,61,0.5); outline-offset: 2px; }
+    .nav-toggle-lines { width: 22px; height: 16px; position: relative; }
+    .nav-toggle-lines span {
+      position: absolute; left: 0; right: 0;
+      height: 2px; background: var(--gray-text);
+      border-radius: 2px;
+    }
+    .nav-toggle-lines span:nth-child(1){ top: 0; }
+    .nav-toggle-lines span:nth-child(2){ top: 7px; }
+    .nav-toggle-lines span:nth-child(3){ bottom: 0; }
 
     main { padding: 40px 0; }
     section { margin-bottom: 60px; }
+
     h2 {
       text-align: center;
       font-size: 2.2rem;
@@ -59,7 +98,9 @@
 
     /* Hero */
     .hero {
-      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+      background:
+        linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+        url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
       background-size: cover;
       background-position: center;
       color: #fff;
@@ -67,7 +108,8 @@
       text-align: center;
     }
     .hero h1 { font-size: 3rem; margin-bottom: 20px; }
-    .hero p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 30px; }
+    .hero p { font-size: 1.2rem; max-width: 700px; margin: 0 auto 30px; }
+
     .btn {
       display: inline-block;
       background: var(--primary);
@@ -76,10 +118,12 @@
       border-radius: 6px;
       font-weight: 600;
       transition: background 0.3s;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
     .btn:hover { background: var(--primary-dark); }
 
-    /* Grids */
+    /* Гриды */
     .services-grid,
     .automation-grid,
     .projects-grid,
@@ -100,36 +144,28 @@
       text-align: center;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
+
     .project-card {
-  background: var(--white);
-  padding: 28px;
-  border-radius: 8px;
-  box-shadow: var(--shadow);
-  text-align: center;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-  user-select: none;
-  border: 1px solid transparent; /* важно для будущей рамки */
-}
+      border: 1px solid transparent;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+    }
+    .project-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+      background-color: #f9fafb;
+    }
 
-.project-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
-  background-color: #f9fafb;
-}
-
-/* Состояние «выбрано» — например, пока открыто модальное окно */
-.project-card--active {
-  background-color: #eef7ff;        /* мягкий голубой фон */
-  border-color: var(--primary);     /* акцентная рамка */
-  box-shadow: 0 8px 20px rgba(255,138,61,0.25); /* тень в тон primary */
-  transform: scale(1.01);           /* лёгкое увеличение */
-}
-
-.project-card--active .project-icon {
-  color: var(--primary);            /* цвет иконки тоже под цвет акцента */
-}
+    /* Модальный акцент (не обязательно) */
+    .project-card--active {
+      background-color: #eef7ff;
+      border-color: var(--primary);
+      box-shadow: 0 8px 20px rgba(255,138,61,0.25);
+      transform: scale(1.01);
+    }
+    .project-card--active .project-icon { color: var(--primary); }
 
     /* About */
     .about-content {
@@ -138,29 +174,33 @@
       gap: 40px;
       align-items: center;
     }
-    @media (max-width: 768px) {
-      .about-content { grid-template-columns: 1fr; }
-      .hero h1 { font-size: 2rem; }
-    }
+    .about-content img { width: 100%; height: auto; display: block; border-radius: 8px; }
 
-    /* Contacts & Form */
+    /* Contacts */
     .contacts-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 40px;
+      align-items: start;
     }
     .contact-info p { margin-bottom: 12px; color: #555; }
+
+    /* Form */
     form { background: #fff; padding: 30px; border-radius: 8px; box-shadow: var(--shadow); }
     .form-group { margin-bottom: 18px; }
     .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--gray-text); }
+
     .form-group input,
-    .form-group select,
     .form-group textarea {
       width: 100%;
       padding: 12px;
       border: 1px solid var(--gray-ui);
       border-radius: 6px;
+      font-size: 16px;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
+
     button[type="submit"] {
       width: 100%;
       padding: 14px;
@@ -170,6 +210,8 @@
       border-radius: 6px;
       font-weight: 600;
       cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
     button[type="submit"]:hover { background: var(--primary-dark); }
 
@@ -185,6 +227,7 @@
       justify-content: space-between;
       align-items: center;
       color: var(--gray-text);
+      gap: 10px;
     }
     .faq-answer {
       color: #666;
@@ -192,11 +235,8 @@
       display: none;
     }
     .faq-item.active .faq-answer { display: block; }
-    .faq-item.active .faq-question::after { content: '−'; }
-    .faq-question::after {
-      content: '+';
-      font-size: 1.2rem;
-    }
+    .faq-question::after { content: '+'; font-size: 1.2rem; flex: 0 0 auto; color: var(--gray-ui); }
+    .faq-item.active .faq-question::after { content: '−'; color: var(--primary); }
 
     footer {
       background: #222;
@@ -215,9 +255,11 @@
       align-items: center;
       z-index: 2000;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.2s ease;
+      padding: 14px;
     }
     .modal-overlay.active { display: flex; opacity: 1; }
+
     .modal {
       background: #fff;
       width: 90%;
@@ -226,38 +268,51 @@
       overflow: auto;
       border-radius: 12px;
       box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-      position: relative;
       display: flex;
       flex-direction: column;
+      -webkit-overflow-scrolling: touch;
     }
+
     .modal-header {
       padding: 16px 20px;
       border-bottom: 1px solid #eee;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 12px;
     }
+
     .close-modal {
       background: none;
       border: none;
       font-size: 1.5rem;
       cursor: pointer;
       color: #999;
+      line-height: 1;
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      -webkit-tap-highlight-color: transparent;
     }
-    .close-modal:hover { color: #333; }
+    .close-modal:hover { color: #333; background: rgba(0,0,0,0.04); }
+
     .modal-body { padding: 20px; }
+
     .project-detail-image {
       width: 100%;
       height: auto;
       border-radius: 8px;
       margin: 0 0 20px 0;
       object-fit: cover;
+      display: block;
     }
+
     .project-detail-title {
       font-size: 1.8rem;
       margin-bottom: 12px;
       color: var(--gray-text);
     }
+
     .project-detail-specs {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -265,23 +320,86 @@
       margin: 16px 0;
       font-size: 0.95rem;
     }
+
+    .spec-row { display: contents; }
     .spec-row span:first-child { color: #666; }
     .project-detail-desc p { margin-bottom: 10px; color: #444; }
+
+    /* Адаптив */
+    @media (max-width: 980px) {
+      h2 { font-size: 1.9rem; margin-bottom: 28px; }
+      .hero { padding: 110px 16px; }
+      .hero h1 { font-size: 2.3rem; }
+      .hero p { font-size: 1.05rem; }
+    }
+
+    @media (max-width: 768px) {
+      .container { padding: 0 14px; }
+      main { padding: 24px 0; }
+      section { margin-bottom: 42px; }
+
+      .nav-toggle { display: inline-flex; }
+
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: rgba(255,255,255,0.98);
+        padding: 14px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        gap: 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        z-index: 1001;
+      }
+
+      .nav-links a { white-space: normal; margin-left: 0; }
+      .nav-links.nav-open { display: flex; }
+
+      .about-content { grid-template-columns: 1fr; gap: 24px; }
+      .contacts-row { grid-template-columns: 1fr; gap: 24px; }
+
+      .hero { padding: 90px 14px; }
+      .hero h1 { font-size: 2rem; }
+      .hero p { font-size: 1rem; margin-bottom: 22px; }
+
+      .project-detail-specs { grid-template-columns: 1fr; }
+      .modal-body { padding: 14px; }
+      .project-detail-title { font-size: 1.35rem; }
+    }
+
+    @media (max-width: 420px) {
+      .hero { padding: 80px 12px; }
+      .hero h1 { font-size: 1.7rem; }
+      .service-card, .auto-card, .project-card, .adv-card { padding: 20px; }
+      .modal-body { padding: 12px; }
+    }
   </style>
 </head>
+
 <body>
 
   <header>
     <div class="container">
       <nav>
         <a href="#" class="logo">Мех Монтаж Строй</a>
-        <div class="nav-links">
+
+        <button class="nav-toggle" type="button" aria-label="Открыть меню" aria-expanded="false">
+          <span class="nav-toggle-lines" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
+        </button>
+
+        <div class="nav-links" id="navLinks">
           <a href="#about">О нас</a>
           <a href="#services">Работы</a>
           <a href="#auto-process">Автоматизация</a>
           <a href="#projects">Выполненные работы</a>
           <a href="#advantages">Преимущества</a>
           <a href="#contacts">Контакты</a>
+          <a href="#faq">FAQ</a>
         </div>
       </nav>
     </div>
@@ -292,7 +410,10 @@
     <section class="hero">
       <div class="container">
         <h1>Ремонт, модернизация и автоматизация оборудования</h1>
-        <p>ООО «Мех Монтаж Строй» (ИНН 7104521321, ОГРН 1137154017131) — выполняем ремонт машин и оборудования (ОКВЭД 33.12), разрабатываем шкафы управления, модернизируем станки и прессы под ПЛК.</p>
+        <p>
+          ООО «Мех Монтаж Строй» (ИНН 7104521321, ОГРН 1137154017131) — выполняем ремонт машин и оборудования (ОКВЭД 33.12),
+          разрабатываем шкафы управления, модернизируем станки и прессы под ПЛК.
+        </p>
         <a href="#contacts" class="btn">Заказать консультацию</a>
       </div>
     </section>
@@ -375,7 +496,7 @@
             <h3 class="auto-title">Интеграция в АСУ ТП цеха</h3>
             <p>Передача параметров (давление, температура, счётчик циклов) в MES/SCADA. Протоколы Modbus, OPC. Визуализация на панели оператора.</p>
           </div>
-                    <div class="auto-card">
+          <div class="auto-card">
             <span class="auto-tag">Аналитика</span>
             <h3 class="auto-title">Сбор и анализ параметров</h3>
             <p>Архивация данных (давление, температура, счётчик циклов), построение трендов, прогноз ТО. Отчёты в Excel/PDF, визуализация на HMI.</p>
@@ -389,153 +510,12 @@
       <div class="container">
         <h2>Выполненные работы</h2>
         <p style="text-align:center; margin-bottom:36px; color:#666;">
-          Примеры реализованных проектов по ремонту, модернизации и автоматизации оборудования. Кликните по карточке, чтобы посмотреть детали в модальном окне.
+          Примеры реализованных проектов по ремонту, модернизации и автоматизации оборудования.
+          Карточки загружаются из <b>projects.json</b>.
         </p>
 
-        <div class="projects-grid">
-          <!-- Проект 1 -->
-          <div class="project-card" onclick="openProjectModal({
-            id: 1,
-            title: 'Модернизация пресса КД2130 на ПЛК ОВЕН',
-            image: 'https://images.unsplash.com/photo-1581092937303-2b88c8b4e7b7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-            specs: [
-              ['Объект', 'Пресс кривошипный КД2130'],
-              ['Задача', 'Замена релейной схемы на ПЛК ОВЕН ПР225'],
-              ['Решение', 'Цикловое управление, контроль давления, защита от перегрузки'],
-              ['Результат', 'Стабильная работа, снижение аварийности, отчёт по диагностике']
-            ],
-            description: 'Выполнена полная модернизация электрической схемы пресса КД2130. Установлен ПЛК ОВЕН ПР225, разработана программа управления с циклами: быстрый ход — рабочий ход — выдержка — возврат. Внедрены датчики давления и концевые выключатели. Добавлена защита от перегрузки и аварийный останов. Подготовлен отчёт о диагностике и наладке, включая протоколы испытаний и рекомендации по обслуживанию.'
-          })">
-            <div class="project-icon">🏗️</div>
-            <h3 class="project-title">Модернизация пресса КД2130</h3>
-            <p>Переход на ПЛК ОВЕН, контроль параметров, защита от аварий.</p>
-          </div>
-
-          <!-- Проект 2 -->
-          <div class="project-card" onclick="openProjectModal({
-            id: 2,
-            title: 'Маслостанция под спецзадачу',
-            image: 'https://images.unsplash.com/photo-1614727398371-8f72c1d9e2b5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-            specs: [
-              ['Тип', 'Маслостанция высокого давления'],
-              ['Давление', 'до 250 бар'],
-              ['Расход', 'до 40 л/мин'],
-              ['Особенности', 'Два диапазона давления, фильтрация, контроль температуры']
-            ],
-            description: 'Спроектирована и собрана маслостанция для гидравлического пресса. Реализованы два диапазона давления для разных операций. Установлены фильтры тонкой очистки (10 мкм) и датчики температуры. Шкаф управления обеспечивает автоматическую работу насосов, световую индикацию и аварийную сигнализацию. Проведены испытания на стенде, параметры соответствуют ТЗ.'
-          })">
-            <div class="project-icon">💧</div>
-            <h3 class="project-title">Маслостанция под спецзадачу</h3>
-            <p>Два диапазона давления, фильтрация и контроль температуры.</p>
-          </div>
-
-          <!-- Проект 3 -->
-          <div class="project-card" onclick="openProjectModal({
-            id: 3,
-            title: 'Диагностика и отчёт по гидросистеме',
-            image: 'https://images.unsplash.com/photo-1581091296827-a2b5c7d6f4e1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-            specs: [
-              ['Оборудование', 'Гидросистема пресса 100 т'],
-              ['Методы', 'Стендовые замеры, анализ масла, визуальный осмотр'],
-              ['Выявлено', 'Утечки, износ уплотнений, загрязнение фильтров'],
-              ['Рекомендации', 'Замена уплотнений, промывка гидросистемы, замена масла']
-            ],
-            description: 'Проведена комплексная диагностика гидросистемы пресса усилием 100 тонн. Выполнены замеры давления и расхода на разных режимах, проведён анализ гидравлического масла. Выявлены утечки в соединениях, износ уплотнений гидроцилиндра и загрязнение фильтров. Подготовлен подробный отчёт с дефектной ведомостью и рекомендациями по ремонту и обслуживанию.'
-          })">
-            <div class="project-icon">📋</div>
-            <h3 class="project-title">Диагностика и отчёт по гидросистеме</h3>
-            <p>Стендовые замеры, выявление дефектов, рекомендации по ремонту.</p>
-          </div>
-
-          <!-- Проект 4 -->
-          <div class="project-card" onclick="openProjectModal({
-            id: 4,
-            title: 'Шкаф управления для маслостанции',
-            image: 'https://images.unsplash.com/photo-1581092670744-83f3e7a7b8e9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-            specs: [
-              ['Состав', 'Автоматы, пускатели, реле, ПЛК, HMI'],
-              ['Функции', 'Управление насосами, аварийная сигнализация, индикация'],
-              ['Интеграция', 'Modbus, передача данных в цех'],
-              ['Статус', 'В эксплуатации с 2024 года']
-            ],
-            description: 'Собран шкаф управления для маслостанции. В составе: автоматы защиты, пускатели насосов, реле контроля фаз, ПЛК и панель оператора. Реализована логика работы насосов, аварийная сигнализация и световая индикация. Настроена передача параметров по Modbus в систему цеха. Шкаф прошёл испытания и введён в эксплуатацию.'
-          })">
-            <div class="project-icon">🔌</div>
-            <h3 class="project-title">Шкаф управления для маслостанции</h3>
-            <p>ПЛК, панель оператора, аварийная сигнализация, интеграция в цех.</p>
-          </div>
-
-          <!-- Проект 5 -->
-          <div class="project-card" onclick="openProjectModal({
-            id: 5,
-            title: 'Ремонт гидроцилиндра: восстановление штока и замена уплотнений',
-            image: 'https://images.unsplash.com/photo-1581092879549-8a2e8a8b5f3c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-            specs: [
-              ['Объект', 'Гидроцилиндр пресса 63 т'],
-              ['Дефекты', 'Задиры штока, износ уплотнений, течь по штоку'],
-              ['Выполнено', 'Шлифовка штока, хромирование, замена комплекта уплотнений'],
-              ['Контроль', 'Испытания на стенде при 150% от номинального давления']
-            ],
-            description: 'Произведён капитальный ремонт гидроцилиндра усилием 63 тонны. Выполнена шлифовка штока с устранением задиров, нанесено хромовое покрытие для повышения износостойкости. Заменён полный комплект уплотнений (NBR, направляющие кольца). Проведены стендовые испытания при 150% нагрузки: герметичность обеспечена, ход плавный, без рывков. Выдан акт испытаний и рекомендации по эксплуатации.'
-          })">
-            <div class="project-icon">🔧</div>
-            <h3 class="project-title">Ремонт гидроцилиндра</h3>
-            <p>Восстановление штока, замена уплотнений, стендовые испытания.</p>
-          </div>
-
-          <!-- Проект 6 -->
-          <div class="project-card" onclick="openProjectModal({
-            id: 6,
-            title: 'Модернизация маслобака: подогрев, фильтрация, датчики',
-            image: 'https://images.unsplash.com/photo-1581092728655-7f8a8a8b5f3d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-            specs: [
-              ['Объект', 'Маслобак гидросистемы 200 л'],
-              ['Доработка', 'Подогрев, двойной контур фильтрации, датчики уровня/температуры'],
-              ['Цель', 'Стабильность вязкости масла, защита насосов, контроль состояния'],
-              ['Результат', 'Снижение простоев, увеличение ресурса насосов и золотников']
-            ],
-            description: 'Модернизирован маслобак объёмом 200 литров. Установлен электрический подогрев для поддержания рабочей температуры масла в межсезонье. Смонтирован двойной контур фильтрации (грубая + тонкая очистка 10 мкм). Добавлены датчики уровня и температуры с выводом на панель оператора. Решение позволило стабилизировать вязкость масла, снизить износ гидроаппаратуры и повысить надёжность системы в целом.'
-          })">
-            <div class="project-icon">⚙️</div>
-            <h3 class="project-title">Модернизация маслобака</h3>
-            <p>Подогрев, двойная фильтрация, контроль уровня и температуры.</p>
-          </div>
-
-          <!-- Проект 7 -->
-          <div class="project-card" onclick="openProjectModal({
-            id: 7,
-            title: 'ПЛК-программа для пресса: компенсация износа оснастки',
-            image: 'https://images.unsplash.com/photo-1581092555222-3f8a8a8b5f3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-            specs: [
-              ['Платформа', 'ПЛК ОВЕН ПЛК210'],
-              ['Особенность', 'Алгоритм компенсации износа оснастки по давлению/ходу'],
-              ['Функции', 'Адаптивный цикл, архивация параметров, тренды'],
-              ['Эффект', 'Стабильное качество деталей, снижение брака, прогноз ТО']
-            ],
-            description: 'Разработана специализированная программа для ПЛК ОВЕН ПЛК210 с адаптивным управлением прессом. Алгоритм учитывает изменение усилия и хода из‑за износа оснастки: автоматически корректирует параметры цикла для поддержания стабильного качества продукции. Реализована архивация данных (давление, ход, усилие) для построения трендов и прогноза технического обслуживания. Результат — снижение процента брака и более точное планирование ремонтов.'
-          })">
-            <div class="project-icon">💻</div>
-            <h3 class="project-title">ПЛК-программа: компенсация износа</h3>
-            <p>Адаптивное управление, архивация, прогноз техобслуживания.</p>
-          </div>
-
-          <!-- Проект 8 -->
-          <div class="project-card" onclick="openProjectModal({
-            id: 8,
-            title: 'Замена гидрораспределителей и тонкая настройка гидросистемы',
-            image: 'https://images.unsplash.com/photo-1581092444111-2f8a8a8b5f3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-            specs: [
-              ['Объект', 'Гидравлическая линия пресса 80 т'],
-              ['Работы', 'Замена распределителей, подбор дросселей, настройка плавности хода'],
-              ['Инструменты', 'Стенд для настройки, манометры, расходомеры'],
-              ['Итог', 'Плавный ход, отсутствие рывков, стабильная повторяемость операций']
-            ],
-            description: 'Выполнена замена изношенных гидрораспределителей на современные аналоги с улучшенными характеристиками. Проведена тонкая настройка гидролинии: подобраны дроссели и клапаны для обеспечения плавного хода без рывков. Настройка выполнялась на стенде с контролем давления и расхода. В результате достигнута стабильная повторяемость циклов и улучшено качество штамповки. Подготовлены протоколы настройки и рекомендации по регулировке.'
-          })">
-            <div class="project-icon">🛠️</div>
-            <h3 class="project-title">Замена распределителей и настройка</h3>
-            <p>Плавный ход, стабильная повторяемость, протоколы настройки.</p>
-          </div>
+        <div class="projects-grid" id="projectsGrid">
+          <p style="text-align:center; color:#666;">Загрузка проектов...</p>
         </div>
       </div>
     </section>
@@ -546,16 +526,16 @@
         <h2>О компании ООО «Мех Монтаж Строй»</h2>
         <div class="about-content">
           <div>
-            <p><strong>ООО «Мех Монтаж Строй»</strong> (ИНН 7104521321, КПП 710401001, ОГРН 1137154017131) — специализированная организация по ремонту и обслуживанию гидравлического и механического оборудования. Дата регистрации: 24.05.2013. Статус: микропредприятие (включено в реестр МСП с 01.08.2016).</p>
+            <p><strong>ООО «Мех Монтаж Строй»</strong> (ИНН 7104521321, КПП 710401001, ОГРН 1137154017131) — специализированная организация по ремонту и обслуживанию гидравлического и механического оборудования. Дата регистрации: 24.05.2013.</p>
             <br/>
             <p>Юридический адрес: 300903, Тульская область, г. Тула, пос. Косая Гора, ул. Некрасова, д. 22. Генеральный директор — Вагнер Владимир Эдуардович.</p>
             <br/>
-            <p>Основной вид деятельности — ремонт машин и оборудования (ОКВЭД 33.12). Уставный капитал — 10 000 руб.</p>
+            <p>Основной вид деятельности — ремонт машин и оборудования (ОКВЭД 33.12). Уставный капитал — 10 000 руб.</p>
             <br/>
-            <p>Мы закрываем полный цикл: от диагностики до сдачи объекта с гарантией. В том числе решаем задачи, близкие к вашим: модернизируем станки (например, КД2130), пишем программы для ПЛК ОВЕН, готовим отчёты о диагностике и ремонте, подбираем комплектующие и гидравлические масла.</p>
+            <p>Мы закрываем полный цикл: от диагностики до сдачи объекта с гарантией. Модернизируем станки, пишем программы для ПЛК ОВЕН, готовим отчёты о диагностике и ремонте.</p>
           </div>
           <div style="text-align:center;">
-            <img src="https://images.unsplash.com/photo-1581092937303-2b88c8b4e7b7?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Цех ООО Мех Монтаж Строй" style="max-width:100%; border-radius:8px;">
+            <img src="https://images.unsplash.com/photo-1581092937303-2b88c8b4e7b7?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Цех ООО Мех Монтаж Строй" />
           </div>
         </div>
       </div>
@@ -568,23 +548,27 @@
         <div style="max-width: 800px; margin: 0 auto;">
           <div class="faq-item">
             <div class="faq-question">Можно ли модернизировать старый пресс под ПЛК ОВЕН?</div>
-            <div class="faq-answer">Да. Мы регулярно модернизируем оборудование (в том числе станки типа КД2130): заменяем релейную логику на ПЛК, добавляем контроль параметров и защиту. Подготовим схему и программу под вашу конфигурацию.</div>
+            <div class="faq-answer">Да. Мы регулярно модернизируем оборудование: заменяем релейную логику на ПЛК, добавляем контроль параметров и защиту. Подготовим схему и программу под вашу конфигурацию.</div>
           </div>
+
           <div class="faq-item">
             <div class="faq-question">Делаете ли вы отчёты по диагностике гидросистем?</div>
-            <div class="faq-answer">Да. По результатам диагностики выдаём отчёт с параметрами (давление, расход, температура), перечнем дефектов и рекомендациями по ремонту или модернизации. Это удобно для отчётности и планирования работ.</div>
+            <div class="faq-answer">Да. По результатам диагностики выдаём отчёт с параметрами (давление, расход, температура), перечнем дефектов и рекомендациями по ремонту или модернизации.</div>
           </div>
+
           <div class="faq-item">
             <div class="faq-question">Сколько времени занимает сборка шкафа управления?</div>
             <div class="faq-answer">Срок зависит от сложности: типовой шкаф — от 3 до 10 рабочих дней; шкаф с ПЛК, HMI и интеграцией в АСУ ТП — от 2 недель. Точные сроки согласуем после ТЗ.</div>
           </div>
+
           <div class="faq-item">
             <div class="faq-question">Есть ли гарантия на работы?</div>
-            <div class="faq-answer">На ремонт и сборку — от 6 месяцев до 1 года в зависимости от объёма работ. На шкафы управления и автоматизацию — до 12 месяцев. При заключении договора сервисного обслуживания предусмотрены расширенные условия.</div>
+            <div class="faq-answer">На ремонт и сборку — от 6 месяцев до 1 года в зависимости от объёма работ. На шкафы управления и автоматизацию — до 12 месяцев.</div>
           </div>
+
           <div class="faq-item">
             <div class="faq-question">Выезжаете ли на объект для диагностики?</div>
-            <div class="faq-answer">Да, выезжаем по Туле и области. Можем провести первичную оценку на месте, снять параметры, составить дефектную ведомость и предложить варианты решения.</div>
+            <div class="faq-answer">Да, выезжаем по Туле и области. Проводим первичную оценку, снимаем параметры, составляем дефектную ведомость и предлагаем варианты решения.</div>
           </div>
         </div>
       </div>
@@ -594,129 +578,241 @@
     <section id="contacts">
       <div class="container">
         <h2>Контакты и заявка</h2>
+
         <div class="contacts-row">
           <div class="contact-info">
             <h3>Свяжитесь с нами</h3>
             <p>📞 Телефон: +7 (XXX) XXX-XX-XX</p>
             <p>✉️ Email: info@meh-montazh-stroy.ru</p>
             <p>📍 Адрес: 300903, Тульская область, г. Тула, пос. Косая Гора, ул. Некрасова, д. 22</p>
-			          <p>🕒 Режим работы: пн–пт, 08:00–17:00 (перерыв 12:00–13:00)</p>
-        </div>
+            <p>🕒 Режим работы: пн–пт, 08:00–17:00 (перерыв 12:00–13:00)</p>
+          </div>
 
-        <form onsubmit="event.preventDefault(); alert('Заявка отправлена! Мы свяжемся с вами в ближайшее время.');">
-          <h3>Оставить заявку</h3>
-          <div class="form-group">
-            <label>Ваше имя</label>
-            <input type="text" placeholder="Иван Иванов" required />
-          </div>
-          <div class="form-group">
-            <label>Телефон или e-mail</label>
-            <input type="text" placeholder="+7 (___) ___-__-__ или email" required />
-          </div>
-          <div class="form-group">
-            <label>Суть запроса</label>
-            <textarea rows="4" placeholder="Например: нужна диагностика пресса КД2130, расчёт стоимости шкафа управления, выезд на объект в Туле"></textarea>
-          </div>
-          <button type="submit" class="btn">Отправить заявку</button>
-        </form>
+          <form id="leadForm">
+            <h3>Оставить заявку</h3>
+
+            <div class="form-group">
+              <label>Ваше имя</label>
+              <input type="text" name="name" placeholder="Иван Иванов" required />
+            </div>
+
+            <div class="form-group">
+              <label>Телефон или e-mail</label>
+              <input type="text" name="contact" placeholder="+7 (___) ___-__-__ или email" required />
+            </div>
+
+            <div class="form-group">
+              <label>Суть запроса</label>
+              <textarea name="message" rows="4" placeholder="Например: нужна диагностика пресса КД2130, расчёт стоимости шкафа управления, выезд на объект в Туле"></textarea>
+            </div>
+
+            <button type="submit">Отправить заявку</button>
+          </form>
+        </div>
       </div>
     </section>
-
-    <!-- Footer -->
-    <footer>
-      <div class="container">
-        <p style="margin-bottom:16px;">ООО «Мех Монтаж Строй» (ИНН 7104521321, ОГРН 1137154017131)</p>
-        <p style="font-size:0.9rem; color:#999;">
-          Все права защищены. Сайт носит информационный характер и не является публичной офертой.<br>
-          Для точного расчёта стоимости работ просим направить техническое задание или фото/схемы оборудования.
-        </p>
-      </div>
-    </footer>
   </main>
 
+  <footer>
+    <div class="container">
+      <p style="margin-bottom:16px;">ООО «Мех Монтаж Строй» (ИНН 7104521321, ОГРН 1137154017131)</p>
+      <p style="font-size:0.9rem; color:#999;">
+        Все права защищены. Сайт носит информационный характер и не является публичной офертой.<br>
+        Для точного расчёта стоимости работ просим направить техническое задание или фото/схемы оборудования.
+      </p>
+    </div>
+  </footer>
+
   <!-- Модальное окно -->
-  <div class="modal-overlay" id="projectModal">
-    <div class="modal">
+  <div class="modal-overlay" id="projectModalOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modal-header">
         <h3 id="modalTitle" style="margin:0; font-size:1.4rem;"></h3>
-        <button class="close-modal" onclick="closeProjectModal()">&times;</button>
+        <button class="close-modal" type="button" onclick="closeProjectModal()" aria-label="Закрыть">&times;</button>
       </div>
+
       <div class="modal-body">
         <img id="modalImage" src="" alt="" class="project-detail-image" />
         <div class="project-detail-title" id="modalSpecsTitle" style="display:none;">Характеристики</div>
-        <div class="project-detail-specs" id="modalSpecs">
-          <!-- Сюда JS подставит строки вида: <div class="spec-row"><span>Параметр</span><span>Значение</span></div> -->
-        </div>
-        <div class="project-detail-desc" id="modalDescription">
-          <!-- Описание проекта -->
-        </div>
+
+        <div class="project-detail-specs" id="modalSpecs"></div>
+        <div class="project-detail-desc" id="modalDescription"></div>
       </div>
     </div>
   </div>
 
   <script>
-    // Логика модального окна
-    const modal = document.getElementById('projectModal');
+    // ===== Мобильное меню =====
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinks = document.getElementById('navLinks');
+
+    function setMenuOpen(open) {
+      if (!navLinks || !navToggle) return;
+      navLinks.classList.toggle('nav-open', open);
+      navToggle.setAttribute('aria-expanded', String(open));
+    }
+
+    if (navToggle && navLinks) {
+      navToggle.addEventListener('click', () => {
+        const open = !navLinks.classList.contains('nav-open');
+        setMenuOpen(open);
+      });
+
+      navLinks.querySelectorAll('a').forEach(a => {
+        a.addEventListener('click', () => setMenuOpen(false));
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!navLinks.contains(e.target) && !navToggle.contains(e.target)) {
+          setMenuOpen(false);
+        }
+      });
+    }
+
+    // ===== FAQ аккордеон =====
+    document.querySelectorAll('.faq-item').forEach(item => {
+      const question = item.querySelector('.faq-question');
+      if (!question) return;
+
+      question.addEventListener('click', () => item.classList.toggle('active'));
+    });
+
+    // ===== Форма (демо) =====
+    const leadForm = document.getElementById('leadForm');
+    if (leadForm) {
+      leadForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('Заявка отправлена! Мы свяжемся с вами в ближайшее время.');
+        leadForm.reset();
+      });
+    }
+
+    // ===== Модальное окно проектов =====
+    const overlay = document.getElementById('projectModalOverlay');
     const modalTitle = document.getElementById('modalTitle');
     const modalImage = document.getElementById('modalImage');
     const modalSpecs = document.getElementById('modalSpecs');
     const modalDescription = document.getElementById('modalDescription');
     const modalSpecsTitle = document.getElementById('modalSpecsTitle');
 
+    let lastActiveProjectCard = null;
+
     window.openProjectModal = function(data) {
-      if (!modal || !modalTitle || !modalImage || !modalSpecs || !modalDescription || !modalSpecsTitle) {
-        console.error('Элементы модального окна не найдены. Проверьте HTML.');
-        return;
-      }
+      if (!overlay || !modalTitle || !modalImage || !modalSpecs || !modalDescription || !modalSpecsTitle) return;
 
-      modalTitle.textContent = data.title;
-      modalImage.src = data.image;
+      modalTitle.textContent = data.title || '';
+      modalImage.src = data.image || '';
+      modalImage.alt = data.title || '';
 
-      // Очистка и заполнение характеристик
       modalSpecs.innerHTML = '';
-      if (data.specs && data.specs.length > 0) {
+
+      const specsArr = Array.isArray(data.specs) ? data.specs : [];
+      if (specsArr.length > 0) {
         modalSpecsTitle.style.display = 'block';
-        data.specs.forEach(spec => {
+        specsArr.forEach(spec => {
           const row = document.createElement('div');
           row.className = 'spec-row';
-          row.innerHTML = `<span>${spec[0]}</span><span>${spec[1]}</span>`;
+          row.innerHTML = `<span>${spec[0] ?? ''}</span><span>${spec[1] ?? ''}</span>`;
           modalSpecs.appendChild(row);
         });
       } else {
         modalSpecsTitle.style.display = 'none';
       }
 
-      // Описание
-      modalDescription.innerHTML = data.description.replace(/\n/g, '<br>');
+      const desc = (data.description || '').toString();
+      // разрешаем переносы строк из JSON
+      modalDescription.innerHTML = desc.replace(/\n/g, '<br>');
 
-      modal.classList.add('active');
-      document.body.style.overflow = 'hidden'; // Блокируем прокрутку страницы
+      overlay.classList.add('active');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
     };
 
     window.closeProjectModal = function() {
-      modal.classList.remove('active');
-      document.body.style.overflow = ''; // Возвращаем прокрутку
+      if (!overlay) return;
+      overlay.classList.remove('active');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      if (lastActiveProjectCard && typeof lastActiveProjectCard.focus === 'function') {
+        lastActiveProjectCard.focus();
+      }
     };
 
-    // Закрытие по клику вне окна
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeProjectModal();
-    });
-
-    // Закрытие по Esc
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal.classList.contains('active')) {
-        closeProjectModal();
-      }
-    });
-
-    // Аккордеон FAQ
-    document.querySelectorAll('.faq-item').forEach(item => {
-      const question = item.querySelector('.faq-question');
-      question.addEventListener('click', () => {
-        item.classList.toggle('active');
+    if (overlay) {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) window.closeProjectModal();
       });
-    });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.classList.contains('active')) window.closeProjectModal();
+      });
+    }
+
+    // ===== Подгрузка projects.json и генерация карточек =====
+    const projectsGrid = document.getElementById('projectsGrid');
+
+    async function loadProjects() {
+      if (!projectsGrid) return;
+
+      try {
+        const res = await fetch('./projects.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error('Не удалось загрузить projects.json');
+        const projects = await res.json();
+
+        projectsGrid.innerHTML = '';
+
+        if (!Array.isArray(projects) || projects.length === 0) {
+          projectsGrid.innerHTML = `<p style="text-align:center; color:#666;">Проекты не найдены в projects.json</p>`;
+          return;
+        }
+
+        projects.forEach(p => {
+          const card = document.createElement('div');
+          card.className = 'project-card';
+          card.setAttribute('role', 'button');
+          card.setAttribute('tabindex', '0');
+          card.setAttribute('aria-label', `Открыть проект: ${p.title || ''}`);
+
+          const icon = p.icon || '🏗️';
+          const title = p.title || '';
+          const preview = p.preview || (Array.isArray(p.specs) && p.specs[0] && p.specs[0][1]) || '';
+
+          card.innerHTML = `
+            <div class="project-icon">${icon}</div>
+            <h3 class="project-title">${title}</h3>
+            <p>${preview}</p>
+          `;
+
+          // клик/тач
+          card.addEventListener('click', () => {
+            lastActiveProjectCard = card;
+            window.openProjectModal({
+              id: p.id,
+              title: p.title,
+              image: p.image,
+              specs: p.specs,
+              description: p.description
+            });
+          });
+
+          // клавиатура
+          card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              card.click();
+            }
+          });
+
+          projectsGrid.appendChild(card);
+        });
+
+      } catch (err) {
+        console.error(err);
+        projectsGrid.innerHTML = `<p style="text-align:center; color:#666;">Не удалось загрузить проекты.</p>`;
+      }
+    }
+
+    loadProjects();
   </script>
 </body>
 </html>
