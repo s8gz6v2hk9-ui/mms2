@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Мех Монтаж Строй — Выполненные работы</title>
+  <style>
+    :root {
+      --primary: #ff8a3d;
+      --gray-bg: #f4f6f9;
+      --white: #ffffff;
+      --shadow: 0 4px 12px rgba(0,0,0,0.08);
+      --text: #333;
+      --border: #e0e0e0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--text); background: var(--gray-bg); line-height: 1.5; }
+    .container { max-width: 1170px; margin: 0 auto; padding: 0 15px; }
+    h2 { text-align: center; margin: 60px 0 30px; font-size: 2rem; }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+
+    .project-card {
+      background: var(--white);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border: 1px solid var(--border);
+    }
+    .project-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+    .project-icon { font-size: 3rem; margin-bottom: 16px; display: block; }
+    .project-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; }
+    .project-desc { color: #666; font-size: 0.95rem; margin-bottom: 12px; }
+    .project-date-badge {
+      display: inline-block; background: #f1f3f5; color: #555;
+      padding: 4px 10px; border-radius: 20px; font-size: 0.85rem;
+    }
+
+    /* Модальное окно */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.65); display: none; justify-content: center; align-items: center; z-index: 2000;
+      opacity: 0; transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active { display: flex; opacity: 1; }
+    .modal {
+      background: var(--white); max-width: 900px; width: 92%; max-height: 90vh;
+      overflow-y: auto; border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+      display: flex; flex-direction: column;
+    }
+    .modal-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; }
+    .close-modal { background: none; border: none; font-size: 1.75rem; cursor: pointer; color: #999; line-height: 1; }
+    .close-modal:hover { color: var(--text); }
+    .modal-body { padding: 20px; }
+    .modal-img { width: 100%; height: auto; border-radius: 8px; margin-bottom: 20px; object-fit: cover; }
+    .specs-table {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; font-size: 0.9rem;
+    }
+    .spec-row span:first-child { color: #888; font-weight: 600; }
+    .spec-row span:last-child { color: var(--text); }
+    .full-desc p { margin-bottom: 14px; color: #444; }
+  </style>
+</head>
+<body>
+  <main>
+    <section id="projects">
+      <div class="container">
+        <h2>Выполненные работы</h2>
+        <div class="projects-grid" id="projectsContainer"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Модалка -->
+  <div class="modal-overlay" id="projectModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle"></h3>
+        <button class="close-modal" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <img src="" alt="" class="modal-img" id="modalImage">
+        <h4>Характеристики</h4>
+        <div class="specs-table" id="modalSpecs"></div>
+        <h4>Описание работы</h4>
+        <div class="full-desc" id="modalDescription"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let projectsData = [];
+    let activeCardElement = null;
+
+    async function loadProjects() {
+      try {
+        const res = await fetch('projects.json');
+        if (!res.ok) throw new Error('JSON не найден');
+        projectsData = await res.json();
+        renderProjects();
+      } catch (e) {
+        console.error(e);
+        document.getElementById('projectsContainer').innerHTML = '<p style="padding:20px; text-align:center;">Ошибка загрузки проектов. Проверьте, что projects.json лежит рядом с index.html.</p>';
+      }
+    }
+
+    function renderProjects() {
+      const container = document.getElementById('projectsContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      projectsData.forEach((p, idx) => {
+        const card = document.createElement('div');
+        card.className = 'project-card';
+        card.onclick = () => openModal(p, card);
+        card.innerHTML = `
+          <div class="project-icon">${p.icon}</div>
+          <h3 class="project-title">${p.title}</h3>
+          <p class="project-desc">${p.shortDesc}</p>
+          <span class="project-date-badge">${p.date}</span>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function openModal(data, cardElement) {
+      const modal = document.getElementById('projectModal');
+      const titleEl = document.getElementById('modalTitle');
+      const imgEl = document.getElementById('modalImage');
+      const specsEl = document.getElementById('modalSpecs');
+      const descEl = document.getElementById('modalDescription');
+      if (!modal || !titleEl || !imgEl || !specsEl || !descEl) return;
+
+      if (activeCardElement) activeCardElement.classList.remove('project-card--active');
+      activeCardElement = cardElement;
+      cardElement.classList.add('project-card--active');
+
+      titleEl.textContent = data.title;
+      imgEl.src = data.image;
+
+      specsEl.innerHTML = '';
+      data.specs.forEach(spec => {
+        const row = document.createElement('div');
+        row.className = 'spec-row';
+        row.innerHTML = `<span>${spec[0]}</span><span>${spec[1]}</span>`;
+        specsEl.appendChild(row);
+      });
+
+      descEl.innerHTML = data.description.split('\n').map(line => `<p>${line}</p>`).join('');
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('projectModal');
+      if (!modal) return;
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+      if (activeCardElement) {
+        activeCardElement.classList.remove('project-card--active');
+        activeCardElement = null;
+      }
+    }
+
+    const modalEl = document.getElementById('projectModal');
+    if (modalEl) {
+      modalEl.addEventListener('click', e => { if (e.target === modalEl) closeModal(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+    }
+
+    loadProjects();
+  </script>
+</body>
+</html>
