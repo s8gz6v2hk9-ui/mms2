@@ -3,182 +3,720 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Мех Монтаж Строй — Выполненные работы</title>
+  <title>Мех Монтаж Строй — ремонт и модернизация оборудования</title>
   <style>
     :root {
       --primary: #ff8a3d;
+      --primary-dark: #d96f26;
       --gray-bg: #f4f6f9;
+      --gray-text: #333;
+      --gray-ui: #8c9aa3;
       --white: #ffffff;
       --shadow: 0 4px 12px rgba(0,0,0,0.08);
-      --text: #333;
-      --border: #e0e0e0;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--text); background: var(--gray-bg); line-height: 1.5; }
-    .container { max-width: 1170px; margin: 0 auto; padding: 0 15px; }
-    h2 { text-align: center; margin: 60px 0 30px; font-size: 2rem; }
+    body {
+      font-family: Arial, sans-serif;
+      color: var(--gray-text);
+      line-height: 1.6;
+      background: var(--gray-bg);
+    }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
 
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 24px;
-      margin-bottom: 60px;
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+    header {
+      background: var(--white);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 70px;
+    }
+    .logo { font-weight: bold; font-size: 1.4rem; color: var(--primary-dark); }
+    .nav-links a {
+      margin-left: 20px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--primary); }
+
+    main { padding: 40px 0; }
+    section { margin-bottom: 60px; }
+    h2 {
+      text-align: center;
+      font-size: 2.2rem;
+      margin-bottom: 40px;
+      color: var(--gray-text);
     }
 
-    .project-card {
+    /* Hero */
+    .hero {
+      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+      background-size: cover;
+      background-position: center;
+      color: #fff;
+      padding: 140px 20px;
+      text-align: center;
+    }
+    .hero h1 { font-size: 3rem; margin-bottom: 20px; }
+    .hero p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 30px; }
+    .btn {
+      display: inline-block;
+      background: var(--primary);
+      color: #fff;
+      padding: 14px 32px;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+    .btn:hover { background: var(--primary-dark); }
+
+    /* Grids */
+    .services-grid,
+    .automation-grid,
+    .projects-grid,
+    .advantages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .service-card,
+    .auto-card,
+    .project-card,
+    .adv-card {
       background: var(--white);
-      padding: 20px;
+      padding: 28px;
       border-radius: 8px;
       box-shadow: var(--shadow);
       text-align: center;
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      border: 1px solid var(--border);
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    .project-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    .project-card {
+  background: var(--white);
+  padding: 28px;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  user-select: none;
+  border: 1px solid transparent; /* важно для будущей рамки */
+}
+
+.project-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+  background-color: #f9fafb;
+}
+
+/* Состояние «выбрано» — например, пока открыто модальное окно */
+.project-card--active {
+  background-color: #eef7ff;        /* мягкий голубой фон */
+  border-color: var(--primary);     /* акцентная рамка */
+  box-shadow: 0 8px 20px rgba(255,138,61,0.25); /* тень в тон primary */
+  transform: scale(1.01);           /* лёгкое увеличение */
+}
+
+.project-card--active .project-icon {
+  color: var(--primary);            /* цвет иконки тоже под цвет акцента */
+}
+
+    /* About */
+    .about-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
     }
-    .project-icon { font-size: 3rem; margin-bottom: 16px; display: block; }
-    .project-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; }
-    .project-desc { color: #666; font-size: 0.95rem; margin-bottom: 12px; }
-    .project-date-badge {
-      display: inline-block; background: #f1f3f5; color: #555;
-      padding: 4px 10px; border-radius: 20px; font-size: 0.85rem;
+    @media (max-width: 768px) {
+      .about-content { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 2rem; }
+    }
+
+    /* Contacts & Form */
+    .contacts-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+    .contact-info p { margin-bottom: 12px; color: #555; }
+    form { background: #fff; padding: 30px; border-radius: 8px; box-shadow: var(--shadow); }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--gray-text); }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--gray-ui);
+      border-radius: 6px;
+    }
+    button[type="submit"] {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button[type="submit"]:hover { background: var(--primary-dark); }
+
+    /* FAQ */
+    .faq-item {
+      border-bottom: 1px solid #eee;
+      padding: 16px 0;
+    }
+    .faq-question {
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--gray-text);
+    }
+    .faq-answer {
+      color: #666;
+      margin-top: 8px;
+      display: none;
+    }
+    .faq-item.active .faq-answer { display: block; }
+    .faq-item.active .faq-question::after { content: '−'; }
+    .faq-question::after {
+      content: '+';
+      font-size: 1.2rem;
+    }
+
+    footer {
+      background: #222;
+      color: #ccc;
+      padding: 40px 0;
+      text-align: center;
     }
 
     /* Модальное окно */
     .modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.65); display: none; justify-content: center; align-items: center; z-index: 2000;
-      opacity: 0; transition: opacity 0.3s ease;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
     .modal-overlay.active { display: flex; opacity: 1; }
     .modal {
-      background: var(--white); max-width: 900px; width: 92%; max-height: 90vh;
-      overflow-y: auto; border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-      display: flex; flex-direction: column;
+      background: #fff;
+      width: 90%;
+      max-width: 960px;
+      max-height: 90vh;
+      overflow: auto;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      position: relative;
+      display: flex;
+      flex-direction: column;
     }
-    .modal-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; }
-    .close-modal { background: none; border: none; font-size: 1.75rem; cursor: pointer; color: #999; line-height: 1; }
-    .close-modal:hover { color: var(--text); }
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #999;
+    }
+    .close-modal:hover { color: #333; }
     .modal-body { padding: 20px; }
-    .modal-img { width: 100%; height: auto; border-radius: 8px; margin-bottom: 20px; object-fit: cover; }
-    .specs-table {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; font-size: 0.9rem;
+    .project-detail-image {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 0 0 20px 0;
+      object-fit: cover;
     }
-    .spec-row span:first-child { color: #888; font-weight: 600; }
-    .spec-row span:last-child { color: var(--text); }
-    .full-desc p { margin-bottom: 14px; color: #444; }
+    .project-detail-title {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+      color: var(--gray-text);
+    }
+    .project-detail-specs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0;
+      font-size: 0.95rem;
+    }
+    .spec-row span:first-child { color: #666; }
+    .project-detail-desc p { margin-bottom: 10px; color: #444; }
   </style>
 </head>
 <body>
+
+  <header>
+    <div class="container">
+      <nav>
+        <a href="#" class="logo">Мех Монтаж Строй</a>
+        <div class="nav-links">
+          <a href="#about">О нас</a>
+          <a href="#services">Работы</a>
+          <a href="#auto-process">Автоматизация</a>
+          <a href="#projects">Выполненные работы</a>
+          <a href="#advantages">Преимущества</a>
+          <a href="#contacts">Контакты</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
   <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container">
+        <h1>Ремонт, модернизация и автоматизация оборудования</h1>
+        <p>ООО «Мех Монтаж Строй» (ИНН 7104521321, ОГРН 1137154017131) — выполняем ремонт машин и оборудования (ОКВЭД 33.12), разрабатываем шкафы управления, модернизируем станки и прессы под ПЛК.</p>
+        <a href="#contacts" class="btn">Заказать консультацию</a>
+      </div>
+    </section>
+
+    <section id="advantages">
+      <div class="container">
+        <h2>Наши преимущества</h2>
+        <div class="advantages-grid">
+          <div class="adv-card">
+            <div class="adv-icon">🧠</div>
+            <h3 class="adv-title">Собственная диагностика</h3>
+            <p>Проводим стендовые испытания, снимаем реальные параметры (давление, расход, температура), готовим отчёты с рекомендациями.</p>
+          </div>
+          <div class="adv-card">
+            <div class="adv-icon">⚙️</div>
+            <h3 class="adv-title">Модернизация на ПЛК</h3>
+            <p>Пишем программы для ПЛК (ОВЕН ПР225, ПЛК210 и др.), делаем шкафы управления, интегрируем в существующие линии.</p>
+          </div>
+          <div class="adv-card">
+            <div class="adv-icon">🛠️</div>
+            <h3 class="adv-title">Полный цикл работ</h3>
+            <p>Ремонт, проектирование, сборка, наладка и гарантийное обслуживание. Не передаём задачи на сторону.</p>
+          </div>
+          <div class="adv-card">
+            <div class="adv-icon">📋</div>
+            <h3 class="adv-title">Техническая документация</h3>
+            <p>Выдаём схемы, программы, отчёты о диагностике и паспорта на маслостанции и шкафы управления.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="services">
+      <div class="container">
+        <h2>Основные виды работ</h2>
+        <div class="services-grid">
+          <div class="service-card">
+            <div class="service-icon">🔧</div>
+            <h3>Ремонт гидравлических прессов</h3>
+            <p>Диагностика, замена узлов, настройка, испытания под нагрузкой. Работаем с прессами любого типа и усилия.</p>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">🛠️</div>
+            <h3>Ремонт гидроцилиндров</h3>
+            <p>Восстановление штоков, замена уплотнений, проверка герметичности, стендовые испытания.</p>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">⚙️</div>
+            <h3>Создание маслостанций</h3>
+            <p>Проектирование и сборка новых маслостанций под задачу: давление, расход, управление, фильтрация.</p>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">🧪</div>
+            <h3>Диагностика и обслуживание</h3>
+            <p>Комплексная диагностика гидросистем, выявление утечек, анализ масла, рекомендации по модернизации.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="auto-process">
+      <div class="container">
+        <h2>Автоматизация технологических процессов</h2>
+        <p style="text-align:center; margin-bottom:36px; color:#666;">
+          Внедряем алгоритмы управления, интегрируем гидравлику в производственную линию, делаем работу безопасной и предсказуемой.
+        </p>
+        <div class="automation-grid">
+          <div class="auto-card">
+            <span class="auto-tag">ПЛК + алгоритм</span>
+            <h3 class="auto-title">Цикловое управление прессом</h3>
+            <p>Разрабатываем циклы: быстрый ход — рабочий ход — выдержка — возврат. Контроль давления и хода, защита от перегрузки. Поддержка ОВЕН ПР225/ПЛК210.</p>
+          </div>
+          <div class="auto-card">
+            <span class="auto-tag">Безопасность</span>
+            <h3 class="auto-title">Безопасные режимы и блокировки</h3>
+            <p>Двухкнопочный пуск, световые завесы, контроль дверей, аварийный останов. Логика на ПЛК, соответствие требованиям промбезопасности.</p>
+          </div>
+          <div class="auto-card">
+            <span class="auto-tag">Интеграция</span>
+            <h3 class="auto-title">Интеграция в АСУ ТП цеха</h3>
+            <p>Передача параметров (давление, температура, счётчик циклов) в MES/SCADA. Протоколы Modbus, OPC. Визуализация на панели оператора.</p>
+          </div>
+                    <div class="auto-card">
+            <span class="auto-tag">Аналитика</span>
+            <h3 class="auto-title">Сбор и анализ параметров</h3>
+            <p>Архивация данных (давление, температура, счётчик циклов), построение трендов, прогноз ТО. Отчёты в Excel/PDF, визуализация на HMI.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Выполненные работы -->
     <section id="projects">
       <div class="container">
         <h2>Выполненные работы</h2>
-        <div class="projects-grid" id="projectsContainer"></div>
+        <p style="text-align:center; margin-bottom:36px; color:#666;">
+          Примеры реализованных проектов по ремонту, модернизации и автоматизации оборудования. Кликните по карточке, чтобы посмотреть детали в модальном окне.
+        </p>
+
+        <div class="projects-grid">
+          <!-- Проект 1 -->
+          <div class="project-card" onclick="openProjectModal({
+            id: 1,
+            title: 'Модернизация пресса КД2130 на ПЛК ОВЕН',
+            image: 'https://images.unsplash.com/photo-1581092937303-2b88c8b4e7b7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+            specs: [
+              ['Объект', 'Пресс кривошипный КД2130'],
+              ['Задача', 'Замена релейной схемы на ПЛК ОВЕН ПР225'],
+              ['Решение', 'Цикловое управление, контроль давления, защита от перегрузки'],
+              ['Результат', 'Стабильная работа, снижение аварийности, отчёт по диагностике']
+            ],
+            description: 'Выполнена полная модернизация электрической схемы пресса КД2130. Установлен ПЛК ОВЕН ПР225, разработана программа управления с циклами: быстрый ход — рабочий ход — выдержка — возврат. Внедрены датчики давления и концевые выключатели. Добавлена защита от перегрузки и аварийный останов. Подготовлен отчёт о диагностике и наладке, включая протоколы испытаний и рекомендации по обслуживанию.'
+          })">
+            <div class="project-icon">🏗️</div>
+            <h3 class="project-title">Модернизация пресса КД2130</h3>
+            <p>Переход на ПЛК ОВЕН, контроль параметров, защита от аварий.</p>
+          </div>
+
+          <!-- Проект 2 -->
+          <div class="project-card" onclick="openProjectModal({
+            id: 2,
+            title: 'Маслостанция под спецзадачу',
+            image: 'https://images.unsplash.com/photo-1614727398371-8f72c1d9e2b5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+            specs: [
+              ['Тип', 'Маслостанция высокого давления'],
+              ['Давление', 'до 250 бар'],
+              ['Расход', 'до 40 л/мин'],
+              ['Особенности', 'Два диапазона давления, фильтрация, контроль температуры']
+            ],
+            description: 'Спроектирована и собрана маслостанция для гидравлического пресса. Реализованы два диапазона давления для разных операций. Установлены фильтры тонкой очистки (10 мкм) и датчики температуры. Шкаф управления обеспечивает автоматическую работу насосов, световую индикацию и аварийную сигнализацию. Проведены испытания на стенде, параметры соответствуют ТЗ.'
+          })">
+            <div class="project-icon">💧</div>
+            <h3 class="project-title">Маслостанция под спецзадачу</h3>
+            <p>Два диапазона давления, фильтрация и контроль температуры.</p>
+          </div>
+
+          <!-- Проект 3 -->
+          <div class="project-card" onclick="openProjectModal({
+            id: 3,
+            title: 'Диагностика и отчёт по гидросистеме',
+            image: 'https://images.unsplash.com/photo-1581091296827-a2b5c7d6f4e1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+            specs: [
+              ['Оборудование', 'Гидросистема пресса 100 т'],
+              ['Методы', 'Стендовые замеры, анализ масла, визуальный осмотр'],
+              ['Выявлено', 'Утечки, износ уплотнений, загрязнение фильтров'],
+              ['Рекомендации', 'Замена уплотнений, промывка гидросистемы, замена масла']
+            ],
+            description: 'Проведена комплексная диагностика гидросистемы пресса усилием 100 тонн. Выполнены замеры давления и расхода на разных режимах, проведён анализ гидравлического масла. Выявлены утечки в соединениях, износ уплотнений гидроцилиндра и загрязнение фильтров. Подготовлен подробный отчёт с дефектной ведомостью и рекомендациями по ремонту и обслуживанию.'
+          })">
+            <div class="project-icon">📋</div>
+            <h3 class="project-title">Диагностика и отчёт по гидросистеме</h3>
+            <p>Стендовые замеры, выявление дефектов, рекомендации по ремонту.</p>
+          </div>
+
+          <!-- Проект 4 -->
+          <div class="project-card" onclick="openProjectModal({
+            id: 4,
+            title: 'Шкаф управления для маслостанции',
+            image: 'https://images.unsplash.com/photo-1581092670744-83f3e7a7b8e9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+            specs: [
+              ['Состав', 'Автоматы, пускатели, реле, ПЛК, HMI'],
+              ['Функции', 'Управление насосами, аварийная сигнализация, индикация'],
+              ['Интеграция', 'Modbus, передача данных в цех'],
+              ['Статус', 'В эксплуатации с 2024 года']
+            ],
+            description: 'Собран шкаф управления для маслостанции. В составе: автоматы защиты, пускатели насосов, реле контроля фаз, ПЛК и панель оператора. Реализована логика работы насосов, аварийная сигнализация и световая индикация. Настроена передача параметров по Modbus в систему цеха. Шкаф прошёл испытания и введён в эксплуатацию.'
+          })">
+            <div class="project-icon">🔌</div>
+            <h3 class="project-title">Шкаф управления для маслостанции</h3>
+            <p>ПЛК, панель оператора, аварийная сигнализация, интеграция в цех.</p>
+          </div>
+
+          <!-- Проект 5 -->
+          <div class="project-card" onclick="openProjectModal({
+            id: 5,
+            title: 'Ремонт гидроцилиндра: восстановление штока и замена уплотнений',
+            image: 'https://images.unsplash.com/photo-1581092879549-8a2e8a8b5f3c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+            specs: [
+              ['Объект', 'Гидроцилиндр пресса 63 т'],
+              ['Дефекты', 'Задиры штока, износ уплотнений, течь по штоку'],
+              ['Выполнено', 'Шлифовка штока, хромирование, замена комплекта уплотнений'],
+              ['Контроль', 'Испытания на стенде при 150% от номинального давления']
+            ],
+            description: 'Произведён капитальный ремонт гидроцилиндра усилием 63 тонны. Выполнена шлифовка штока с устранением задиров, нанесено хромовое покрытие для повышения износостойкости. Заменён полный комплект уплотнений (NBR, направляющие кольца). Проведены стендовые испытания при 150% нагрузки: герметичность обеспечена, ход плавный, без рывков. Выдан акт испытаний и рекомендации по эксплуатации.'
+          })">
+            <div class="project-icon">🔧</div>
+            <h3 class="project-title">Ремонт гидроцилиндра</h3>
+            <p>Восстановление штока, замена уплотнений, стендовые испытания.</p>
+          </div>
+
+          <!-- Проект 6 -->
+          <div class="project-card" onclick="openProjectModal({
+            id: 6,
+            title: 'Модернизация маслобака: подогрев, фильтрация, датчики',
+            image: 'https://images.unsplash.com/photo-1581092728655-7f8a8a8b5f3d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+            specs: [
+              ['Объект', 'Маслобак гидросистемы 200 л'],
+              ['Доработка', 'Подогрев, двойной контур фильтрации, датчики уровня/температуры'],
+              ['Цель', 'Стабильность вязкости масла, защита насосов, контроль состояния'],
+              ['Результат', 'Снижение простоев, увеличение ресурса насосов и золотников']
+            ],
+            description: 'Модернизирован маслобак объёмом 200 литров. Установлен электрический подогрев для поддержания рабочей температуры масла в межсезонье. Смонтирован двойной контур фильтрации (грубая + тонкая очистка 10 мкм). Добавлены датчики уровня и температуры с выводом на панель оператора. Решение позволило стабилизировать вязкость масла, снизить износ гидроаппаратуры и повысить надёжность системы в целом.'
+          })">
+            <div class="project-icon">⚙️</div>
+            <h3 class="project-title">Модернизация маслобака</h3>
+            <p>Подогрев, двойная фильтрация, контроль уровня и температуры.</p>
+          </div>
+
+          <!-- Проект 7 -->
+          <div class="project-card" onclick="openProjectModal({
+            id: 7,
+            title: 'ПЛК-программа для пресса: компенсация износа оснастки',
+            image: 'https://images.unsplash.com/photo-1581092555222-3f8a8a8b5f3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+            specs: [
+              ['Платформа', 'ПЛК ОВЕН ПЛК210'],
+              ['Особенность', 'Алгоритм компенсации износа оснастки по давлению/ходу'],
+              ['Функции', 'Адаптивный цикл, архивация параметров, тренды'],
+              ['Эффект', 'Стабильное качество деталей, снижение брака, прогноз ТО']
+            ],
+            description: 'Разработана специализированная программа для ПЛК ОВЕН ПЛК210 с адаптивным управлением прессом. Алгоритм учитывает изменение усилия и хода из‑за износа оснастки: автоматически корректирует параметры цикла для поддержания стабильного качества продукции. Реализована архивация данных (давление, ход, усилие) для построения трендов и прогноза технического обслуживания. Результат — снижение процента брака и более точное планирование ремонтов.'
+          })">
+            <div class="project-icon">💻</div>
+            <h3 class="project-title">ПЛК-программа: компенсация износа</h3>
+            <p>Адаптивное управление, архивация, прогноз техобслуживания.</p>
+          </div>
+
+          <!-- Проект 8 -->
+          <div class="project-card" onclick="openProjectModal({
+            id: 8,
+            title: 'Замена гидрораспределителей и тонкая настройка гидросистемы',
+            image: 'https://images.unsplash.com/photo-1581092444111-2f8a8a8b5f3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+            specs: [
+              ['Объект', 'Гидравлическая линия пресса 80 т'],
+              ['Работы', 'Замена распределителей, подбор дросселей, настройка плавности хода'],
+              ['Инструменты', 'Стенд для настройки, манометры, расходомеры'],
+              ['Итог', 'Плавный ход, отсутствие рывков, стабильная повторяемость операций']
+            ],
+            description: 'Выполнена замена изношенных гидрораспределителей на современные аналоги с улучшенными характеристиками. Проведена тонкая настройка гидролинии: подобраны дроссели и клапаны для обеспечения плавного хода без рывков. Настройка выполнялась на стенде с контролем давления и расхода. В результате достигнута стабильная повторяемость циклов и улучшено качество штамповки. Подготовлены протоколы настройки и рекомендации по регулировке.'
+          })">
+            <div class="project-icon">🛠️</div>
+            <h3 class="project-title">Замена распределителей и настройка</h3>
+            <p>Плавный ход, стабильная повторяемость, протоколы настройки.</p>
+          </div>
+        </div>
       </div>
     </section>
+
+    <!-- О компании -->
+    <section id="about">
+      <div class="container">
+        <h2>О компании ООО «Мех Монтаж Строй»</h2>
+        <div class="about-content">
+          <div>
+            <p><strong>ООО «Мех Монтаж Строй»</strong> (ИНН 7104521321, КПП 710401001, ОГРН 1137154017131) — специализированная организация по ремонту и обслуживанию гидравлического и механического оборудования. Дата регистрации: 24.05.2013. Статус: микропредприятие (включено в реестр МСП с 01.08.2016).</p>
+            <br/>
+            <p>Юридический адрес: 300903, Тульская область, г. Тула, пос. Косая Гора, ул. Некрасова, д. 22. Генеральный директор — Вагнер Владимир Эдуардович.</p>
+            <br/>
+            <p>Основной вид деятельности — ремонт машин и оборудования (ОКВЭД 33.12). Уставный капитал — 10 000 руб.</p>
+            <br/>
+            <p>Мы закрываем полный цикл: от диагностики до сдачи объекта с гарантией. В том числе решаем задачи, близкие к вашим: модернизируем станки (например, КД2130), пишем программы для ПЛК ОВЕН, готовим отчёты о диагностике и ремонте, подбираем комплектующие и гидравлические масла.</p>
+          </div>
+          <div style="text-align:center;">
+            <img src="https://images.unsplash.com/photo-1581092937303-2b88c8b4e7b7?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80" alt="Цех ООО Мех Монтаж Строй" style="max-width:100%; border-radius:8px;">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq">
+      <div class="container">
+        <h2>Частые вопросы</h2>
+        <div style="max-width: 800px; margin: 0 auto;">
+          <div class="faq-item">
+            <div class="faq-question">Можно ли модернизировать старый пресс под ПЛК ОВЕН?</div>
+            <div class="faq-answer">Да. Мы регулярно модернизируем оборудование (в том числе станки типа КД2130): заменяем релейную логику на ПЛК, добавляем контроль параметров и защиту. Подготовим схему и программу под вашу конфигурацию.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">Делаете ли вы отчёты по диагностике гидросистем?</div>
+            <div class="faq-answer">Да. По результатам диагностики выдаём отчёт с параметрами (давление, расход, температура), перечнем дефектов и рекомендациями по ремонту или модернизации. Это удобно для отчётности и планирования работ.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">Сколько времени занимает сборка шкафа управления?</div>
+            <div class="faq-answer">Срок зависит от сложности: типовой шкаф — от 3 до 10 рабочих дней; шкаф с ПЛК, HMI и интеграцией в АСУ ТП — от 2 недель. Точные сроки согласуем после ТЗ.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">Есть ли гарантия на работы?</div>
+            <div class="faq-answer">На ремонт и сборку — от 6 месяцев до 1 года в зависимости от объёма работ. На шкафы управления и автоматизацию — до 12 месяцев. При заключении договора сервисного обслуживания предусмотрены расширенные условия.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">Выезжаете ли на объект для диагностики?</div>
+            <div class="faq-answer">Да, выезжаем по Туле и области. Можем провести первичную оценку на месте, снять параметры, составить дефектную ведомость и предложить варианты решения.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Контакты -->
+    <section id="contacts">
+      <div class="container">
+        <h2>Контакты и заявка</h2>
+        <div class="contacts-row">
+          <div class="contact-info">
+            <h3>Свяжитесь с нами</h3>
+            <p>📞 Телефон: +7 (XXX) XXX-XX-XX</p>
+            <p>✉️ Email: info@meh-montazh-stroy.ru</p>
+            <p>📍 Адрес: 300903, Тульская область, г. Тула, пос. Косая Гора, ул. Некрасова, д. 22</p>
+			          <p>🕒 Режим работы: пн–пт, 08:00–17:00 (перерыв 12:00–13:00)</p>
+        </div>
+
+        <form onsubmit="event.preventDefault(); alert('Заявка отправлена! Мы свяжемся с вами в ближайшее время.');">
+          <h3>Оставить заявку</h3>
+          <div class="form-group">
+            <label>Ваше имя</label>
+            <input type="text" placeholder="Иван Иванов" required />
+          </div>
+          <div class="form-group">
+            <label>Телефон или e-mail</label>
+            <input type="text" placeholder="+7 (___) ___-__-__ или email" required />
+          </div>
+          <div class="form-group">
+            <label>Суть запроса</label>
+            <textarea rows="4" placeholder="Например: нужна диагностика пресса КД2130, расчёт стоимости шкафа управления, выезд на объект в Туле"></textarea>
+          </div>
+          <button type="submit" class="btn">Отправить заявку</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <p style="margin-bottom:16px;">ООО «Мех Монтаж Строй» (ИНН 7104521321, ОГРН 1137154017131)</p>
+        <p style="font-size:0.9rem; color:#999;">
+          Все права защищены. Сайт носит информационный характер и не является публичной офертой.<br>
+          Для точного расчёта стоимости работ просим направить техническое задание или фото/схемы оборудования.
+        </p>
+      </div>
+    </footer>
   </main>
 
-  <!-- Модалка -->
+  <!-- Модальное окно -->
   <div class="modal-overlay" id="projectModal">
     <div class="modal">
       <div class="modal-header">
-        <h3 id="modalTitle"></h3>
-        <button class="close-modal" onclick="closeModal()">&times;</button>
+        <h3 id="modalTitle" style="margin:0; font-size:1.4rem;"></h3>
+        <button class="close-modal" onclick="closeProjectModal()">&times;</button>
       </div>
       <div class="modal-body">
-        <img src="" alt="" class="modal-img" id="modalImage">
-        <h4>Характеристики</h4>
-        <div class="specs-table" id="modalSpecs"></div>
-        <h4>Описание работы</h4>
-        <div class="full-desc" id="modalDescription"></div>
+        <img id="modalImage" src="" alt="" class="project-detail-image" />
+        <div class="project-detail-title" id="modalSpecsTitle" style="display:none;">Характеристики</div>
+        <div class="project-detail-specs" id="modalSpecs">
+          <!-- Сюда JS подставит строки вида: <div class="spec-row"><span>Параметр</span><span>Значение</span></div> -->
+        </div>
+        <div class="project-detail-desc" id="modalDescription">
+          <!-- Описание проекта -->
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    let projectsData = [];
-    let activeCardElement = null;
+    // Логика модального окна
+    const modal = document.getElementById('projectModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalImage = document.getElementById('modalImage');
+    const modalSpecs = document.getElementById('modalSpecs');
+    const modalDescription = document.getElementById('modalDescription');
+    const modalSpecsTitle = document.getElementById('modalSpecsTitle');
 
-    async function loadProjects() {
-      try {
-        const res = await fetch('projects.json');
-        if (!res.ok) throw new Error('JSON не найден');
-        projectsData = await res.json();
-        renderProjects();
-      } catch (e) {
-        console.error(e);
-        document.getElementById('projectsContainer').innerHTML = '<p style="padding:20px; text-align:center;">Ошибка загрузки проектов. Проверьте, что projects.json лежит рядом с index.html.</p>';
+    window.openProjectModal = function(data) {
+      if (!modal || !modalTitle || !modalImage || !modalSpecs || !modalDescription || !modalSpecsTitle) {
+        console.error('Элементы модального окна не найдены. Проверьте HTML.');
+        return;
       }
-    }
 
-    function renderProjects() {
-      const container = document.getElementById('projectsContainer');
-      if (!container) return;
-      container.innerHTML = '';
-      projectsData.forEach((p, idx) => {
-        const card = document.createElement('div');
-        card.className = 'project-card';
-        card.onclick = () => openModal(p, card);
-        card.innerHTML = `
-          <div class="project-icon">${p.icon}</div>
-          <h3 class="project-title">${p.title}</h3>
-          <p class="project-desc">${p.shortDesc}</p>
-          <span class="project-date-badge">${p.date}</span>
-        `;
-        container.appendChild(card);
-      });
-    }
+      modalTitle.textContent = data.title;
+      modalImage.src = data.image;
 
-    function openModal(data, cardElement) {
-      const modal = document.getElementById('projectModal');
-      const titleEl = document.getElementById('modalTitle');
-      const imgEl = document.getElementById('modalImage');
-      const specsEl = document.getElementById('modalSpecs');
-      const descEl = document.getElementById('modalDescription');
-      if (!modal || !titleEl || !imgEl || !specsEl || !descEl) return;
+      // Очистка и заполнение характеристик
+      modalSpecs.innerHTML = '';
+      if (data.specs && data.specs.length > 0) {
+        modalSpecsTitle.style.display = 'block';
+        data.specs.forEach(spec => {
+          const row = document.createElement('div');
+          row.className = 'spec-row';
+          row.innerHTML = `<span>${spec[0]}</span><span>${spec[1]}</span>`;
+          modalSpecs.appendChild(row);
+        });
+      } else {
+        modalSpecsTitle.style.display = 'none';
+      }
 
-      if (activeCardElement) activeCardElement.classList.remove('project-card--active');
-      activeCardElement = cardElement;
-      cardElement.classList.add('project-card--active');
+      // Описание
+      modalDescription.innerHTML = data.description.replace(/\n/g, '<br>');
 
-      titleEl.textContent = data.title;
-      imgEl.src = data.image;
-
-      specsEl.innerHTML = '';
-      data.specs.forEach(spec => {
-        const row = document.createElement('div');
-        row.className = 'spec-row';
-        row.innerHTML = `<span>${spec[0]}</span><span>${spec[1]}</span>`;
-        specsEl.appendChild(row);
-      });
-
-      descEl.innerHTML = data.description.split('\n').map(line => `<p>${line}</p>`).join('');
       modal.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
+      document.body.style.overflow = 'hidden'; // Блокируем прокрутку страницы
+    };
 
-    function closeModal() {
-      const modal = document.getElementById('projectModal');
-      if (!modal) return;
+    window.closeProjectModal = function() {
       modal.classList.remove('active');
-      document.body.style.overflow = '';
-      if (activeCardElement) {
-        activeCardElement.classList.remove('project-card--active');
-        activeCardElement = null;
+      document.body.style.overflow = ''; // Возвращаем прокрутку
+    };
+
+    // Закрытие по клику вне окна
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeProjectModal();
+    });
+
+    // Закрытие по Esc
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('active')) {
+        closeProjectModal();
       }
-    }
+    });
 
-    const modalEl = document.getElementById('projectModal');
-    if (modalEl) {
-      modalEl.addEventListener('click', e => { if (e.target === modalEl) closeModal(); });
-      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-    }
-
-    loadProjects();
+    // Аккордеон FAQ
+    document.querySelectorAll('.faq-item').forEach(item => {
+      const question = item.querySelector('.faq-question');
+      question.addEventListener('click', () => {
+        item.classList.toggle('active');
+      });
+    });
   </script>
 </body>
 </html>
