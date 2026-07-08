@@ -1,308 +1,77 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8" />
-  <title>Админка: Мех Монтаж Строй</title>
-  <style>
-    :root {
-      --primary: #ff8a3d;
-      --danger: #dc3545;
-      --bg: #f8f9fa;
-      --card: #ffffff;
-      --border: #dee2e6;
-      --text: #212529;
-    }
-    body { background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; padding: 20px; }
-    .container { max-width: 960px; margin: 0 auto; }
-    h1, h3 { margin-bottom: 16px; }
-    
-    /* Формы */
-    .admin-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    @media(max-width:768px) { .admin-form-grid { grid-template-columns: 1fr; } }
-    .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; margin-bottom: 6px; font-weight: 600; }
-    .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; }
-
-    /* Кнопки */
-    .btn { padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; color: white; }
-    .btn-primary { background: var(--primary); }
-    .btn-danger { background: var(--danger); }
-    .btn-secondary { background: #6c757d; }
-    .btn:hover { opacity: 0.9; }
-
-    /* Список проектов */
-    .projects-list { margin-top: 32px; }
-    .proj-item {
-      background: var(--card); border: 1px solid var(--border); padding: 16px;
-      border-radius: 8px; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 12px;
-    }
-    .proj-info h4 { margin: 0 0 6px 0; }
-    .proj-date { color: #6c757d; font-size: 0.9rem; }
-    .actions button { padding: 6px 12px; font-size: 0.85rem; }
-
-    /* Блок вывода JSON */
-    #jsonOutput {
-      margin-top: 24px; padding: 16px; background: #1e1e1e; color: #d4d4d4;
-      border-radius: 6px; overflow-x: auto; font-family: monospace; font-size: 0.85rem;
-      white-space: pre-wrap;
-      display: none; /* скрыт по умолчанию */
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Админ-панель: Проекты</h1>
-
-    <!-- Вход -->
-    <div id="loginForm">
-      <p>Введите пароль для входа в админку:</p>
-      <input type="password" id="adminPassword" style="padding:10px; width:250px;"/>
-      <button class="btn btn-primary" onclick="checkAdminLogin()">Войти</button>
-      <p id="loginError" style="color:#dc3545; margin-top:10px; display:none;">Неверный пароль.</p>
-    </div>
-
-    <!-- Форма добавления/редактирования -->
-    <div id="addForm" style="display:none;">
-      <h3 id="formTitle">Добавить проект</h3>
-      <input type="hidden" id="projId"/>
-      <div class="admin-form-grid">
-        <div class="form-group">
-          <label>Название</label>
-          <input type="text" id="projTitle" required/>
-        </div>
-        <div class="form-group">
-          <label>Иконка (эмодзи)</label>
-          <input type="text" id="projIcon" value="🏗️" maxlength="2"/>
-        </div>
-      </div>
-      <div class="admin-form-grid">
-        <div class="form-group">
-          <label>Краткое описание</label>
-          <textarea id="projShort" rows="3"></textarea>
-        </div>
-        <div class="form-group">
-          <label>Дата</label>
-          <input type="text" id="projDate" placeholder="Март 2024" required/>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Ссылка на фото</label>
-        <input type="url" id="projImage" placeholder="https://..." required/>
-      </div>
-      <div class="form-group">
-        <label>Характеристики (Параметр|Значение, с новой строки)</label>
-        <textarea id="projSpecsRaw" rows="4" placeholder="ПЛК|ОВЕН ПР225&#10;Объект|Пресс КД2130"></textarea>
-        <small style="color:#6c757d; display:block; margin-top:6px;">Пишите: Параметр|Значение, каждую пару с новой строки.</small>
-      </div>
-      <div class="form-group">
-        <label>Полное описание работ</label>
-        <textarea id="projDesc" rows="6" placeholder="Подробно опишите ход работ..."></textarea>
-      </div>
-
-      <button class="btn btn-primary" id="saveBtn">Сохранить проект</button>
-      <button type="button" class="btn btn-secondary" onclick="cancelEdit()">Отмена</button>
-    </div>
-
-    <!-- Управление JSON -->
-    <div style="margin-top:24px;">
-      <button class="btn btn-primary" onclick="generateJson()">Получить JSON (скопировать)</button>
-      <button class="btn btn-primary" onclick="downloadJson()">Скачать JSON файл</button>
-    </div>
-    <div id="jsonOutput"></div>
-
-    <!-- Список проектов -->
-    <div class="projects-list">
-      <h3>Текущие проекты</h3>
-      <div id="projectsList"></div>
-    </div>
-  </div>
-
-  <script>
-    let projectsData = [];
-    let isAdminLogged = false;
-
-    // Стартовые проекты (если JSON ещё нет)
-    const defaultProjects = [
-      {
-        id: 1,
-        title: "Модернизация пресса КД2130",
-        icon: "🏗️",
-        shortDesc: "Переход на ПЛК ОВЕН ПР225, защита от перегрузок.",
-        image: "https://images.unsplash.com/photo-1581092937303-2b88c8b4e7b7?w=800&q=80",
-        date: "Март 2024",
-        specs: [["Объект", "Пресс КД2130"], ["ПЛК", "ОВЕН ПР225"]],
-        description: "Полная замена релейной схемы на контроллер ОВЕН. Реализован цикл: быстрый ход — рабочий ход — выдержка — возврат. Добавлен контроль давления и аварийный останов."
-      },
-      {
-        id: 2,
-        title: "Ремонт гидроцилиндра 63 т",
-        icon: "🔧",
-        shortDesc: "Шлифовка штока, хромирование, замена уплотнений.",
-        image: "https://images.unsplash.com/photo-1581092879549-8a2e8a8b5f3c?w=800&q=80",
-        date: "Май 2024",
-        specs: [["Усилие", "63 тонны"], ["Тип работ", "Капитальный ремонт"]],
-        description: "Устранение задиров штока, нанесение хромового покрытия. Замена комплекта уплотнений NBR. Испытания при 150% нагрузки."
-      }
-    ];
-
-    function checkAdminLogin() {
-      const pwdInput = document.getElementById('adminPassword');
-      const loginForm = document.getElementById('loginForm');
-      const addForm = document.getElementById('addForm');
-      const errorEl = document.getElementById('loginError');
-
-      if (pwdInput.value === 'admin') {
-        isAdminLogged = true;
-        loginForm.style.display = 'none';
-        addForm.style.display = 'block';
-        errorEl.style.display = 'none';
-        pwdInput.value = '';
-        loadProjects();
-      } else {
-        errorEl.style.display = 'block';
-      }
-    }
-
-    function loadProjects() {
-      // Если хочешь, можно добавить загрузку JSON через fetch, но для админки проще стартовать с дефолтных
-      projectsData = [...defaultProjects];
-      renderProjectsList();
-    }
-
-    function prepareFormForAdd() {
-      document.getElementById('formTitle').textContent = 'Добавить проект';
-      document.getElementById('projId').value = '';
-      document.getElementById('projTitle').value = '';
-      document.getElementById('projIcon').value = '🏗️';
-      document.getElementById('projShort').value = '';
-      document.getElementById('projDate').value = '';
-      document.getElementById('projImage').value = '';
-      document.getElementById('projSpecsRaw').value = '';
-      document.getElementById('projDesc').value = '';
-      document.getElementById('saveBtn').textContent = 'Добавить проект';
-    }
-
-    function prepareFormForEdit(project) {
-      document.getElementById('formTitle').textContent = 'Редактировать проект';
-      document.getElementById('projId').value = project.id;
-      document.getElementById('projTitle').value = project.title;
-      document.getElementById('projIcon').value = project.icon;
-      document.getElementById('projShort').value = project.shortDesc;
-      document.getElementById('projDate').value = project.date;
-      document.getElementById('projImage').value = project.image;
-      
-      const specsText = project.specs.map(s => `${s[0]}|${s[1]}`).join('\n');
-      document.getElementById('projSpecsRaw').value = specsText;
-      
-      document.getElementById('projDesc').value = project.description;
-      document.getElementById('saveBtn').textContent = 'Сохранить изменения';
-    }
-
-    function cancelEdit() {
-      prepareFormForAdd();
-    }
-
-    function saveProject() {
-      const idInput = document.getElementById('projId');
-      const title = document.getElementById('projTitle').value.trim();
-      const icon = document.getElementById('projIcon').value.trim() || '🏗️';
-      const shortDesc = document.getElementById('projShort').value.trim();
-      const date = document.getElementById('projDate').value.trim();
-      const image = document.getElementById('projImage').value.trim();
-      const specsRaw = document.getElementById('projSpecsRaw').value.trim();
-      const description = document.getElementById('projDesc').value.trim();
-
-      if (!title || !date || !image) {
-        alert('Заполните обязательные поля: название, дата и ссылка на фото.');
-        return;
-      }
-
-      const specs = [];
-      specsRaw.split('\n').forEach(line => {
-        const parts = line.split('|');
-        if (parts.length >= 2) {
-          specs.push([parts[0].trim(), parts[1].trim()]);
-        }
-      });
-
-      const newProject = {
-        id: idInput.value ? Number(idInput.value) : Date.now(),
-        title,
-        icon,
-        shortDesc,
-        date,
-        image,
-        specs,
-        description
-      };
-
-      const existingIndex = projectsData.findIndex(p => p.id === newProject.id);
-      if (existingIndex !== -1) {
-        projectsData[existingIndex] = newProject;
-      } else {
-        projectsData.unshift(newProject);
-      }
-
-      renderProjectsList();
-      prepareFormForAdd();
-      alert('Проект сохранён в памяти админки. Нажмите «Получить JSON» или «Скачать JSON», чтобы обновить projects.json');
-    }
-
-    document.getElementById('saveBtn').onclick = saveProject;
-
-    function deleteProject(id) {
-      if (!confirm('Вы уверены, что хотите удалить этот проект?')) return;
-      projectsData = projectsData.filter(p => p.id !== id);
-      renderProjectsList();
-    }
-
-    function renderProjectsList() {
-      const container = document.getElementById('projectsList');
-      container.innerHTML = '';
-
-      if (projectsData.length === 0) {
-        container.innerHTML = '<p>Проектов пока нет.</p>';
-        return;
-      }
-
-      projectsData.forEach(p => {
-        const el = document.createElement('div');
-        el.className = 'proj-item';
-        el.innerHTML = `
-          <div class="proj-info">
-            <h4>${p.title}</h4>
-            <span class="proj-date">${p.date}</span>
-          </div>
-          <div class="actions">
-            <button class="btn" style="background:#0d6efd;" onclick="prepareFormForEdit(${JSON.stringify(p)})">Редактировать</button>
-            <button class="btn btn-danger" onclick="deleteProject(${p.id})">Удалить</button>
-          </div>
-        `;
-        container.appendChild(el);
-      });
-    }
-
-    // --- ГЛАВНОЕ: ГЕНЕРАЦИЯ И СКАЧИВАНИЕ JSON ---
-
-    function generateJson() {
-      const jsonText = JSON.stringify(projectsData, null, 2);
-      const output = document.getElementById('jsonOutput');
-      output.textContent = jsonText;
-      output.style.display = 'block';
-      output.scrollIntoView({ behavior: 'smooth' });
-      alert('JSON готов. Скопируйте содержимое блока ниже и вставьте в projects.json');
-    }
-
-    function downloadJson() {
-      const jsonText = JSON.stringify(projectsData, null, 2);
-      const blob = new Blob([jsonText], {type: 'application/json'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'projects.json';
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-  </script>
-</body>
-</html>
+[
+  {
+    "id": 1,
+    "title": "Модернизация пресса КД2130",
+    "icon": "🏗️",
+    "shortDesc": "Переход на ПЛК ОВЕН ПР225, защита от перегрузок и контроль давления.",
+    "image": "https://images.unsplash.com/photo-1581092937303-2b88c8b4e7b7?w=800&q=80",
+    "date": "Март 2024",
+    "specs": [
+      ["Объект", "Пресс КД2130"],
+      ["ПЛК", "ОВЕН ПР225"],
+      ["Цикл работы", "Быстрый ход → рабочий ход → выдержка → возврат"],
+      ["Защита", "По току и давлению"]
+    ],
+    "description": "Полная замена релейной схемы на контроллер ОВЕН. Реализован цикл: быстрый ход — рабочий ход — выдержка — возврат. Добавлен контроль давления и аварийный останов. Подготовлен отчёт о диагностике и наладке."
+  },
+  {
+    "id": 2,
+    "title": "Ремонт гидроцилиндра 63 т",
+    "icon": "🔧",
+    "shortDesc": "Шлифовка штока, хромирование, замена уплотнений NBR.",
+    "image": "https://images.unsplash.com/photo-1581092879549-8a2e8a8b5f3c?w=800&q=80",
+    "date": "Май 2024",
+    "specs": [
+      ["Усилие", "63 тонны"],
+      ["Тип работ", "Капитальный ремонт"],
+      ["Обработка", "Шлифовка и хромирование штока"],
+      ["Уплотнения", "NBR комплект"]
+    ],
+    "description": "Устранение задиров штока, нанесение хромового покрытия. Замена комплекта уплотнений NBR. Испытания при 150% нагрузки: герметичность обеспечена."
+  },
+  {
+    "id": 3,
+    "title": "Автоматизация маслостанции с ПЛК ОВЕН",
+    "icon": "⚡",
+    "shortDesc": "ПЛК ОВЕН, датчики давления/температуры, визуализация на панели.",
+    "image": "https://images.unsplash.com/photo-1605747534433-6e6b1a2c9c3d?w=800&q=80",
+    "date": "Июль 2024",
+    "specs": [
+      ["Система", "Маслостанция высокого давления"],
+      ["ПЛК", "ОВЕН ПЛК110"],
+      ["Датчики", "Давление, температура, уровень"],
+      ["Интерфейс", "Панель оператора"]
+    ],
+    "description": "Внедрена автоматизация маслостанции: контроль давления и температуры, защита по аварийным порогам, индикация на панели оператора. Написана логика управления и аварийные сценарии."
+  },
+  {
+    "id": 4,
+    "title": "Диагностика и ремонт пресса усилием 100 т",
+    "icon": "🛠️",
+    "shortDesc": "Поиск утечек, замена манжет, наладка клапанов, отчёт по диагностике.",
+    "image": "https://images.unsplash.com/photo-1599421656768-a5852b1b2c1f?w=800&q=80",
+    "date": "Сентябрь 2024",
+    "specs": [
+      ["Усилие пресса", "100 тонн"],
+      ["Работы", "Диагностика, ремонт гидравлики"],
+      ["Замена", "Манжеты, уплотнения, фильтры"],
+      ["Результат", "Восстановление номинальных параметров"]
+    ],
+    "description": "Проведена полная диагностика пресса: найдены и устранены утечки, заменены манжеты и уплотнения, выполнена наладка распределителей. Подготовлен подробный отчёт с замерами и рекомендациями по обслуживанию."
+  },
+  {
+    "id": 5,
+    "title": "Монтаж гидросистемы на объекте (стройка дома)",
+    "icon": "🏠",
+    "shortDesc": "Прокладка труб, установка насосной станции, опрессовка, запуск.",
+    "image": "https://images.unsplash.com/photo-1558981403-c5f9dcedce0c?w=800&q=80",
+    "date": "Октябрь 2024",
+    "specs": [
+      ["Назначение", "Гидросистема для стройплощадки"],
+      ["Оборудование", "Насосная станция, РВД, распределители"],
+      ["Этапы", "Монтаж, опрессовка, пробный пуск"],
+      ["Особенность", "Работа в стеснённых условиях"]
+    ],
+    "description": "Смонтирована временная гидросистема для строительных нужд: проложены трубопроводы и РВД, установлена насосная станция, выполнены опрессовка и пробный пуск. Учтены особенности площадки и требования безопасности."
+  }
+]
