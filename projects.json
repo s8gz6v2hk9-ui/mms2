@@ -4,7 +4,7 @@
     "title": "Модернизация пресса КД2130",
     "icon": "🏗️",
     "shortDesc": "Переход на ПЛК ОВЕН ПР225, защита от перегрузок и контроль давления.",
-    "image": "https://github.com/s8gz6v2hk9-ui/mms2/blob/main/image-3717601.png",
+    "image": "https://raw.githubusercontent.com/s8gz6v2hk9-ui/mms2/main/image-3717601.png",
     "date": "Март 2024",
     "specs": [
       ["Объект", "Пресс КД2130"],
