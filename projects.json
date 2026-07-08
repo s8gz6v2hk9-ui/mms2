@@ -34,7 +34,7 @@
     "title": "Автоматизация маслостанции с ПЛК ОВЕН",
     "icon": "⚡",
     "shortDesc": "ПЛК ОВЕН, датчики давления/температуры, визуализация на панели.",
-    "image": "https://images.unsplash.com/photo-1605747534433-6e6b1a2c9c3d?w=800&q=80",
+    "image src="https://raw.githubusercontent.com/s8gz6v2hk9-ui/mms2/main/image-3717601.png",
     "date": "Июль 2024",
     "specs": [
       ["Система", "Маслостанция высокого давления"],
