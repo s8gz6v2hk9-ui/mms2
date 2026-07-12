@@ -587,29 +587,35 @@ text-align: center;
             <p>🕒 Режим работы: пн–пт, 08:00–17:00 (перерыв 12:00–13:00)</p>
           </div>
 
-          <form action="https://formsubmit.co/mms-2026@bk.ru" method="POST">
-  <!-- Настройки FormSubmit -->
+          <form id="mms-contact-form" action="https://formsubmit.co/mms-2026@bk.ru" method="POST">
+  <!-- Обязательные скрытые поля для FormSubmit -->
   <input type="hidden" name="_subject" value="🔔 Новая заявка с сайта Мех Монтаж Строй">
   <input type="hidden" name="_captcha" value="false">
   <input type="hidden" name="_template" value="table">
-  <input type="hidden" name="_next" value="thank-you.html">
+  <input type="hidden" name="_autoreply" value="true">
+
+  <!-- Защита от ботов (оставляй обязательно) -->
+  <div style="position:absolute; left:-9999px; top:-9999px;">
+    <input type="text" name="honey" autocomplete="off">
+  </div>
+
   <h3>Оставить заявку</h3>
-  <div class="form-group">
-    <label>Ваше имя</label>
-    <input type="text" name="Имя" placeholder="Иван Иванов" required />
-  </div>
 
-  <div class="form-group">
-    <label>Телефон или e-mail</label>
-    <input type="text" name="Контакт" placeholder="+7 (___) ___-__-__ или email" required />
-  </div>
+  <label>Ваше имя</label>
+  <input type="text" name="Имя" placeholder="Иван Иванов" required><br><br>
 
-  <div class="form-group">
-    <label>Суть запроса</label>
-    <textarea name="Сообщение" rows="4" placeholder="Например: нужна диагностика пресса КД2130, расчёт стоимости шкафа управления, выезд на объект в Туле" required></textarea>
-  </div>
+  <label>Телефон</label>
+  <input type="tel" name="Телефон" placeholder="+7 (___) ___-__-__" required><br><br>
 
-  <button type="submit">Отправить заявку</button>
+  <label>Email (необязательно)</label>
+  <input type="email" name="Email" placeholder="name@example.com"><br><br>
+
+  <label>Суть запроса</label>
+  <textarea name="Сообщение" rows="4"
+            placeholder="Например: диагностика КД2130, выезд в Туле, расчёт шкафа управления"
+            required></textarea><br><br>
+
+  <button type="submit" id="mms-submit-btn">Отправить заявку</button>
 </form>
         </div>
       </div>
