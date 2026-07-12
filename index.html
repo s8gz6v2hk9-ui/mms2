@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -63,6 +62,7 @@
 
     .nav-links a:hover { color: var(--primary); }
 
+    /* КНОПКА БУРГЕРА */
     .nav-toggle {
       display: none;
       border: 0;
@@ -95,16 +95,17 @@
       margin-bottom: 40px;
       color: var(--gray-text);
     }
-
+/* https://raw.githubusercontent.com/s8gz6v2hk9-ui/mms2/main/image.jpg=80 */
+    /* Hero */
     .hero {
-      background:
-        linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-        url('https://images.unsplash.com/photo-1509395176047-4a66953fd5ea?auto=format&fit=crop&w=2400&q=80');
-      background-size: cover;
-      background-position: center;
-      color: #fff;
-      padding: 140px 20px;
-      text-align: center;
+background:
+linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+url('https://images.unsplash.com/photo-1509395176047-4a66953fd5ea?auto=format&fit=crop&w=2400&q=80');
+background-size: cover;
+background-position: center;
+color: #fff;
+padding: 140px 20px;
+text-align: center;
     }
     .hero h1 { font-size: 3rem; margin-bottom: 20px; }
     .hero p { font-size: 1.2rem; max-width: 700px; margin: 0 auto 30px; }
@@ -122,6 +123,7 @@
     }
     .btn:hover { background: var(--primary-dark); }
 
+    /* Гриды */
     .services-grid,
     .automation-grid,
     .projects-grid,
@@ -156,6 +158,16 @@
       background-color: #f9fafb;
     }
 
+    /* Модальный акцент (не обязательно) */
+    .project-card--active {
+      background-color: #eef7ff;
+      border-color: var(--primary);
+      box-shadow: 0 8px 20px rgba(255,138,61,0.25);
+      transform: scale(1.01);
+    }
+    .project-card--active .project-icon { color: var(--primary); }
+
+    /* About */
     .about-content {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -164,6 +176,7 @@
     }
     .about-content img { width: 100%; height: auto; display: block; border-radius: 8px; }
 
+    /* Contacts */
     .contacts-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -172,6 +185,7 @@
     }
     .contact-info p { margin-bottom: 12px; color: #555; }
 
+    /* Form */
     form { background: #fff; padding: 30px; border-radius: 8px; box-shadow: var(--shadow); }
     .form-group { margin-bottom: 18px; }
     .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--gray-text); }
@@ -187,7 +201,7 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    button {
+    button[type="submit"] {
       width: 100%;
       padding: 14px;
       background: var(--primary);
@@ -199,8 +213,9 @@
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
     }
-    button:hover { background: var(--primary-dark); }
+    button[type="submit"]:hover { background: var(--primary-dark); }
 
+    /* FAQ */
     .faq-item {
       border-bottom: 1px solid #eee;
       padding: 16px 0;
@@ -230,6 +245,7 @@
       text-align: center;
     }
 
+    /* Модальное окно */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -309,6 +325,7 @@
     .spec-row span:first-child { color: #666; }
     .project-detail-desc p { margin-bottom: 10px; color: #444; }
 
+    /* Адаптив */
     @media (max-width: 980px) {
       h2 { font-size: 1.9rem; margin-bottom: 28px; }
       .hero { padding: 110px 16px; }
@@ -389,6 +406,7 @@
   </header>
 
   <main>
+    <!-- Hero -->
     <section class="hero">
       <div class="container">
         <h1>Ремонт, модернизация и автоматизация оборудования</h1>
@@ -487,6 +505,7 @@
       </div>
     </section>
 
+    <!-- Выполненные работы -->
     <section id="projects">
       <div class="container">
         <h2>Выполненные работы</h2>
@@ -500,6 +519,7 @@
       </div>
     </section>
 
+    <!-- О компании -->
     <section id="about">
       <div class="container">
         <h2>О компании ООО «Мех Монтаж Строй»</h2>
@@ -520,6 +540,7 @@
       </div>
     </section>
 
+    <!-- FAQ -->
     <section id="faq">
       <div class="container">
         <h2>Частые вопросы</h2>
@@ -552,6 +573,7 @@
       </div>
     </section>
 
+    <!-- Контакты -->
     <section id="contacts">
       <div class="container">
         <h2>Контакты и заявка</h2>
@@ -565,27 +587,30 @@
             <p>🕒 Режим работы: пн–пт, 08:00–17:00 (перерыв 12:00–13:00)</p>
           </div>
 
-          <form id="contactForm">
-            <h3>Оставить заявку</h3>
-            <div class="form-group">
-              <label>Ваше имя</label>
-              <input type="text" name="name" placeholder="Иван Иванов" required />
-            </div>
+          <form action="https://formsubmit.co/mms-2026@bk.ru" method="POST">
+  <!-- Настройки FormSubmit -->
+  <input type="hidden" name="_subject" value="🔔 Новая заявка с сайта Мех Монтаж Строй">
+  <input type="hidden" name="_captcha" value="false">
+  <input type="hidden" name="_template" value="table">
+  <input type="hidden" name="_next" value="thank-you.html">
+  <h3>Оставить заявку</h3>
+  <div class="form-group">
+    <label>Ваше имя</label>
+    <input type="text" name="Имя" placeholder="Иван Иванов" required />
+  </div>
 
-            <div class="form-group">
-              <label>Телефон или e-mail</label>
-              <input type="text" name="contact" placeholder="+7 (___) ___-__-__ или email" required />
-            </div>
+  <div class="form-group">
+    <label>Телефон или e-mail</label>
+    <input type="text" name="Контакт" placeholder="+7 (___) ___-__-__ или email" required />
+  </div>
 
-            <div class="form-group">
-              <label>Суть запроса</label>
-              <textarea name="message" rows="4" placeholder="Например: нужна диагностика пресса КД2130, расчёт стоимости шкафа управления, выезд на объект в Туле" required></textarea>
-            </div>
+  <div class="form-group">
+    <label>Суть запроса</label>
+    <textarea name="Сообщение" rows="4" placeholder="Например: нужна диагностика пресса КД2130, расчёт стоимости шкафа управления, выезд на объект в Туле" required></textarea>
+  </div>
 
-            <button type="submit" id="submitBtn">Отправить заявку</button>
-            
-            <div id="formMessage" style="display:none; margin-top:16px; padding:14px; border-radius:6px; text-align:center; font-weight:500;"></div>
-          </form>
+  <button type="submit">Отправить заявку</button>
+</form>
         </div>
       </div>
     </section>
@@ -601,6 +626,7 @@
     </div>
   </footer>
 
+  <!-- Модальное окно -->
   <div class="modal-overlay" id="projectModalOverlay" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modal-header">
@@ -619,6 +645,7 @@
   </div>
 
   <script>
+    // ===== Мобильное меню =====
     const navToggle = document.querySelector('.nav-toggle');
     const navLinks = document.getElementById('navLinks');
 
@@ -645,6 +672,7 @@
       });
     }
 
+    // ===== FAQ аккордеон =====
     document.querySelectorAll('.faq-item').forEach(item => {
       const question = item.querySelector('.faq-question');
       if (!question) return;
@@ -652,6 +680,9 @@
       question.addEventListener('click', () => item.classList.toggle('active'));
     });
 
+    // ===== Форма (демо) =====
+    
+    // ===== Модальное окно проектов =====
     const overlay = document.getElementById('projectModalOverlay');
     const modalTitle = document.getElementById('modalTitle');
     const modalImage = document.getElementById('modalImage');
@@ -684,6 +715,7 @@
       }
 
       const desc = (data.description || '').toString();
+      // разрешаем переносы строк из JSON
       modalDescription.innerHTML = desc.replace(/\n/g, '<br>');
 
       overlay.classList.add('active');
@@ -711,6 +743,7 @@
       });
     }
 
+    // ===== Подгрузка projects.json и генерация карточек =====
     const projectsGrid = document.getElementById('projectsGrid');
 
     async function loadProjects() {
@@ -745,6 +778,7 @@
             <p>${preview}</p>
           `;
 
+          // клик/тач
           card.addEventListener('click', () => {
             lastActiveProjectCard = card;
             window.openProjectModal({
@@ -756,6 +790,7 @@
             });
           });
 
+          // клавиатура
           card.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
@@ -773,42 +808,6 @@
     }
 
     loadProjects();
-
-    const contactForm = document.getElementById('contactForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const formMessage = document.getElementById('formMessage');
-const contactForm = document.getElementById('contactForm');
-const submitBtn = document.getElementById('submitBtn');
-const formMessage = document.getElementById('formMessage');
-
-if (contactForm && submitBtn && formMessage) {
-  contactForm.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(contactForm);
-    
-    // Отправляем форму
-    fetch('https://formsubmit.co/mms-2026@bk.ru', {
-      method: 'POST',
-      body: formData
-    });
-
-    // Сразу скрываем форму и показываем сообщение
-    contactForm.querySelectorAll('.form-group').forEach(group => {
-      group.style.display = 'none';
-    });
-    submitBtn.style.display = 'none';
-    contactForm.querySelector('h3').style.display = 'none';
-
-    formMessage.style.display = 'block';
-    formMessage.style.background = '#d4edda';
-    formMessage.style.color = '#155724';
-    formMessage.style.border = '1px solid #c3e6cb';
-    formMessage.innerHTML = '✅ <strong>Сообщение отправлено!</strong><br>Мы свяжемся с вами в ближайшее время.';
-  });
-}
-
   </script>
 </body>
 </html>
-
