@@ -777,65 +777,37 @@
     const contactForm = document.getElementById('contactForm');
     const submitBtn = document.getElementById('submitBtn');
     const formMessage = document.getElementById('formMessage');
+const contactForm = document.getElementById('contactForm');
+const submitBtn = document.getElementById('submitBtn');
+const formMessage = document.getElementById('formMessage');
 
-    ifif (contactForm && submitBtn && formMessage) {
+if (contactForm && submitBtn && formMessage) {
   contactForm.addEventListener('submit', async function(e) {
     e.preventDefault();
     
     const formData = new FormData(contactForm);
-    const data = {
-      _subject: '🔔 Новая заявка с сайта Мех Монтаж Строй',
-      _captcha: 'false',
-      _template: 'table',
-      Имя: formData.get('name'),
-      Контакт: formData.get('contact'),
-      Сообщение: formData.get('message')
-    };
+    
+    // Отправляем форму
+    fetch('https://formsubmit.co/mms-2026@bk.ru', {
+      method: 'POST',
+      body: formData
+    });
 
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Отправка...';
-    formMessage.style.display = 'none';
+    // Сразу скрываем форму и показываем сообщение
+    contactForm.querySelectorAll('.form-group').forEach(group => {
+      group.style.display = 'none';
+    });
+    submitBtn.style.display = 'none';
+    contactForm.querySelector('h3').style.display = 'none';
 
-    try {
-      const response = await fetch('https://formsubmit.co/mms-2026@bk.ru', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
-
-      if (response.ok) {
-        // Скрываем все поля формы
-        contactForm.querySelectorAll('.form-group').forEach(group => {
-          group.style.display = 'none';
-        });
-        submitBtn.style.display = 'none';
-        contactForm.querySelector('h3').style.display = 'none';
-
-        // Показываем сообщение об успехе
-        formMessage.style.display = 'block';
-        formMessage.style.background = '#d4edda';
-        formMessage.style.color = '#155724';
-        formMessage.style.border = '1px solid #c3e6cb';
-        formMessage.innerHTML = '✅ <strong>Сообщение успешно отправлено!</strong><br>Мы свяжемся с вами в ближайшее время.';
-        
-      } else {
-        throw new Error('Ошибка отправки');
-      }
-    } catch (error) {
-      formMessage.style.display = 'block';
-      formMessage.style.background = '#f8d7da';
-      formMessage.style.color = '#721c24';
-      formMessage.style.border = '1px solid #f5c6cb';
-      formMessage.textContent = '❌ Произошла ошибка. Попробуйте позже или позвоните нам.';
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Отправить заявку';
-    }
+    formMessage.style.display = 'block';
+    formMessage.style.background = '#d4edda';
+    formMessage.style.color = '#155724';
+    formMessage.style.border = '1px solid #c3e6cb';
+    formMessage.innerHTML = '✅ <strong>Сообщение отправлено!</strong><br>Мы свяжемся с вами в ближайшее время.';
   });
 }
+
   </script>
 </body>
 </html>
